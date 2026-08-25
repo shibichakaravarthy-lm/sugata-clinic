@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) — GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-846S2LVMRY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-846S2LVMRY');
+  </script>
+
+  <title>Service | Sugata Clinic</title>
+  <meta name="description" content="Sugata Clinic service details." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX449K9H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="site-header-slot"></div>
+
+  <div id="svcMain"></div>
+
+  <div id="site-footer-slot"></div>
+
+  <script src="js/services-data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+    const s = SERVICES[id];
+    const main = document.getElementById("svcMain");
+
+    if (!s) {
+      main.innerHTML = `<section class="section"><div class="wrap center">
+        <h1>Service not found</h1>
+        <p class="section-lead" style="margin:14px auto 24px">The page you're looking for isn't available. Browse all our services instead.</p>
+        <a class="btn btn-primary" href="services.html">All services</a>
+      </div></section>`;
+    } else {
+      document.title = `${s.title} | Sugata Clinic`;
+      const doctorName = s.cat === "gyn" ? "Dr. Roshana Fulmali" : "Dr. Mukul R Fulmali";
+      const doctorRole = s.cat === "gyn" ? "Obstetrician, Gynaecologist & Fertility Specialist" : "Consultant Cardiologist";
+      const doctorLink = s.cat === "gyn" ? "dr-roshana.html" : "dr-mukul.html";
+      const btnClass = s.cat === "gyn" ? "btn-primary" : "btn-cardiac";
+      const wa = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hi Sugata Clinic, I'd like to book a consultation for " + s.title + ".")}`;
+
+      // related services in same category
+      const related = Object.keys(SERVICES).filter(k => SERVICES[k].cat === s.cat && k !== id).slice(0,5);
+
+      main.innerHTML = `
+      <section class="svc-hero ${s.cat}">
+        <div class="bgimg" style="background-image:url('${s.image}')"></div>
+        <div class="ov"></div>
+        <div class="wrap inner">
+          <div class="crumb" style="color:rgba(255,255,255,.8)"><a href="index.html" style="color:#fff">Home</a> › <a href="services.html" style="color:#fff">Services</a> › ${s.title}</div>
+          <span class="stage">${s.stage}</span>
+          <h1>${s.title}</h1>
+          <p>${s.short}</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="wrap svc-body">
+          <div class="prose reveal">
+            <h3>Overview</h3>
+            <p>${s.about}</p>
+            <h3>What this includes</h3>
+            <ul>${s.points.map(p => `<li>${p}</li>`).join("")}</ul>
+            <p style="margin-top:22px;color:var(--muted);font-size:.9rem">
+              This page offers general information and is not a substitute for a consultation.
+              For advice specific to you, please book a visit.
+            </p>
+            <a class="btn ${btnClass} btn-lg" href="${wa}" target="_blank" rel="noopener" style="margin-top:12px">Book this consultation</a>
+          </div>
+
+          <aside class="side-card reveal">
+            <h4>Your specialist</h4>
+            <p style="font-weight:600;color:var(--ink);margin-bottom:2px">${doctorName}</p>
+            <p style="font-size:.88rem;color:var(--muted);margin-bottom:14px">${doctorRole}</p>
+            <a class="btn btn-ghost" href="${doctorLink}" style="width:100%;justify-content:center;margin-bottom:24px">View profile</a>
+
+            <h4>Related care</h4>
+            <ul>${related.map(k => `<li><a href="service.html?id=${k}">${SERVICES[k].title}</a></li>`).join("")}</ul>
+
+            <a class="btn ${btnClass}" href="${wa}" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:6px">Book on WhatsApp</a>
+          </aside>
+        </div>
+      </section>`;
+
+      document.querySelectorAll(".reveal").forEach(e => e.classList.add("in"));
+    }
+  </script>
+</body>
+</html>

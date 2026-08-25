@@ -1,0 +1,248 @@
+/* ============================================================
+   Sugata — shared site config, header/footer, interactions
+   Edit SITE below to update phone, address, links everywhere.
+   ============================================================ */
+
+const SITE = {
+  name: "Sugata Heart & Women's Wellness Clinic",
+  phone: "+918123432935",            // call / clinic line
+  phoneDisplay: "+91 81234 32935",
+  whatsapp: "918123432935",          // WhatsApp number (wa.me: country code + number)
+  whatsappDisplay: "+91 81234 32935",
+  addressShort: "Jeevan Bima Nagar, Indiranagar, Bengaluru",
+  addressFull:
+    "3rd Floor, Jeevan Bima Nagar Main Rd, above Kanti Sweets, LIC Colony, HAL 3rd Stage, Sector 11, Indiranagar, Bengaluru, Karnataka 560075",
+  mapEmbed:
+    "https://www.google.com/maps?q=Sugata+Heart+and+Women%27s+Wellness+Clinic,+Jeevan+Bima+Nagar+Main+Rd,+Indiranagar,+Bengaluru,+Karnataka+560075&output=embed",
+  mapLink:
+    "https://www.google.com/maps/search/?api=1&query=Sugata+Heart+and+Women%27s+Wellness+Clinic+Indiranagar+Bengaluru+560075",
+  social: {
+    instagram: "https://www.instagram.com/sugataclinic?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
+    facebook: "",   // add link when available
+    linkedin: "",   // add link when available
+  },
+};
+
+/* social icon glyphs */
+const SOCIAL_ICONS = {
+  instagram:
+    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13-.67-.66-1.34-1.07-2.13-1.38-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4zm6.41-10.85a1.44 1.44 0 1 0 1.44 1.44 1.44 1.44 0 0 0-1.44-1.44z"/></svg>',
+  facebook:
+    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>',
+  linkedin:
+    '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0z"/></svg>',
+};
+
+function socialBlock() {
+  const items = [
+    ["instagram", "ig"],
+    ["facebook", "fb"],
+    ["linkedin", "li"],
+  ]
+    .filter(([key]) => SITE.social[key])
+    .map(
+      ([key, cls]) =>
+        `<a class="${cls}" href="${SITE.social[key]}" target="_blank" rel="noopener" aria-label="${key}">${SOCIAL_ICONS[key]}</a>`
+    )
+    .join("");
+  if (!items) return "";
+  return `<div class="foot-social">
+    <span class="foot-social-label">Join us</span>
+    <div class="foot-social-icons">${items}</div>
+  </div>`;
+}
+
+const waLink = (msg) =>
+  `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+    msg || "Hi Sugata Clinic, I'd like to book a consultation."
+  )}`;
+
+/* ---------- NAV ---------- */
+const NAV = [
+  { label: "Home", href: "index.html" },
+  { label: "Services", href: "services.html" },
+  { label: "Diagnostics", href: "diagnostics.html" },
+  { label: "Dr. Roshana", href: "dr-roshana.html" },
+  { label: "Dr. Mukul", href: "dr-mukul.html" },
+  { label: "Your Journey", href: "journey.html" },
+  { label: "Reviews", href: "reviews.html" },
+  { label: "Contact", href: "contact.html" },
+];
+
+function currentPage() {
+  const p = location.pathname.split("/").pop();
+  return p === "" ? "index.html" : p;
+}
+
+function buildHeader() {
+  const active = currentPage();
+  const links = NAV.map(
+    (n) =>
+      `<a href="${n.href}" class="${n.href === active ? "active" : ""}">${n.label}</a>`
+  ).join("");
+  return `
+  <header class="site-header">
+    <div class="wrap nav">
+      <a class="brand" href="index.html" aria-label="Sugata Clinic home">
+        <img src="assets/logo.png" alt="Sugata Heart & Women's Wellness Clinic"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <span class="brand-fallback" style="display:none">
+          <span class="b1">Sugata</span>
+          <span class="b2">HEART &amp; WOMEN'S WELLNESS</span>
+        </span>
+      </a>
+      <nav class="nav-links" id="navLinks">${links}<a href="doctors.html"
+        class="nav-mobile-only ${active === "doctors.html" ? "active" : ""}">Book Consultation</a></nav>
+      <div class="nav-cta">
+        <a class="btn btn-primary" href="doctors.html">Book Consultation</a>
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>`;
+}
+
+function buildFooter() {
+  return `
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div class="foot-about">
+          <div class="foot-logo">
+            <img src="assets/logo.png" alt="Sugata Heart & Women's Wellness Clinic"
+                 onerror="this.parentNode.innerHTML='<span class=\\'b1\\'>Sugata</span><span class=\\'b2\\'>HEART &amp; WOMEN\\'S WELLNESS CLINIC</span>';this.parentNode.classList.add('foot-brand');this.parentNode.classList.remove('foot-logo');">
+          </div>
+          <p>Two dedicated specialists under one roof in Indiranagar, Bengaluru —
+             compassionate, non-judgmental care for every woman, and complete heart care for every family.</p>
+          <a class="btn btn-primary" href="${waLink()}" target="_blank" rel="noopener">Book an Appointment</a>
+          ${socialBlock()}
+        </div>
+
+        <div>
+          <h4>Explore</h4>
+          <ul class="foot-links">
+            <li><a href="services.html">Services</a></li>
+            <li><a href="diagnostics.html">Diagnostics</a></li>
+            <li><a href="doctors.html">Book a consultation</a></li>
+            <li><a href="dr-roshana.html">Dr. Roshana</a></li>
+            <li><a href="dr-mukul.html">Dr. Mukul</a></li>
+            <li><a href="journey.html">Your Journey</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Our Two Services</h4>
+          <div class="foot-services">
+            <div class="foot-service">
+              <strong>Women's Health</strong>
+              <span>Compassionate obstetric &amp; gynaecological care</span>
+            </div>
+            <div class="foot-service car">
+              <strong>Heart Health</strong>
+              <span>Complete cardiac care</span>
+            </div>
+            <div style="font-size:.85rem;margin-top:6px;">Indiranagar, Bengaluru</div>
+          </div>
+        </div>
+
+        <div>
+          <h4>Reach Us</h4>
+          <ul class="foot-links">
+            <li><a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a></li>
+            <li><a href="${waLink()}" target="_blank" rel="noopener">WhatsApp us</a></li>
+            <li style="line-height:1.5">${SITE.addressFull}</li>
+            <li><a href="${SITE.mapLink}" target="_blank" rel="noopener">Open in Google Maps →</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="yr"></span> ${SITE.name}. All rights reserved.</span>
+        <span>Jeevan Bima Nagar · Indiranagar · Bengaluru 560075</span>
+      </div>
+    </div>
+  </footer>
+  <a class="wa-float" href="${waLink()}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.5 0 12.05 0a11.82 11.82 0 018.413 3.488 11.82 11.82 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zM6.597 20.13c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.82 9.82 0 001.599 5.317l-.999 3.648 3.898-.664zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.767.967-.94 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.017-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+  </a>`;
+}
+
+function mountChrome() {
+  const h = document.getElementById("site-header-slot");
+  const f = document.getElementById("site-footer-slot");
+  if (h) h.outerHTML = buildHeader();
+  if (f) f.outerHTML = buildFooter();
+
+  const yr = document.getElementById("yr");
+  if (yr) yr.textContent = "2026";
+
+  const toggle = document.getElementById("navToggle");
+  const links = document.getElementById("navLinks");
+  if (toggle && links) {
+    toggle.addEventListener("click", () => links.classList.toggle("open"));
+    links.querySelectorAll("a").forEach((a) =>
+      a.addEventListener("click", () => links.classList.remove("open"))
+    );
+  }
+}
+
+/* ---------- Reveal on scroll ---------- */
+function initReveal() {
+  const els = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window) || !els.length) {
+    els.forEach((e) => e.classList.add("in"));
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+  els.forEach((e) => io.observe(e));
+}
+
+/* ---------- Count-up stats ---------- */
+function initCountUp() {
+  const nums = document.querySelectorAll("[data-count]");
+  if (!nums.length) return;
+  const run = (el) => {
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || "";
+    const dur = 1400;
+    let start = null;
+    const step = (t) => {
+      if (!start) start = t;
+      const p = Math.min((t - start) / dur, 1);
+      const val = Math.floor(p * target);
+      el.textContent = val.toLocaleString("en-IN") + (p === 1 ? suffix : "");
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((en) => {
+        if (en.isIntersecting) {
+          run(en.target);
+          io.unobserve(en.target);
+        }
+      });
+    },
+    { threshold: 0.5 }
+  );
+  nums.forEach((n) => io.observe(n));
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  mountChrome();
+  initReveal();
+  initCountUp();
+});

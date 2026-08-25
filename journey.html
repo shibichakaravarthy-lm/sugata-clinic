@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) — GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-846S2LVMRY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-846S2LVMRY');
+  </script>
+
+  <title>Your Journey at Sugata | How care works, step by step</title>
+  <meta name="description" content="From your first message to follow-up — a simple, unhurried, automated booking experience at Sugata Clinic, Indiranagar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX449K9H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="site-header-slot"></div>
+
+  <section class="hero" style="padding:56px 0 30px">
+    <div class="wrap center reveal">
+      <span class="eyebrow">Your journey</span>
+      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Simple, unhurried, and completely in your control</h1>
+      <p class="section-lead" style="margin:0 auto">
+        We designed the Sugata experience to feel calm from the very first message —
+        clear steps, minimal waiting, and a doctor who truly listens.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:40px">
+    <div class="wrap timeline">
+      <div class="tstep reveal"><div class="n">1</div><h4>Reach out</h4><p>Message us on WhatsApp or call the clinic. You'll get an immediate reply and help choosing the right specialist — Dr. Roshana for women's health, Dr. Mukul for your heart.</p></div>
+      <div class="tstep reveal"><div class="n">2</div><h4>Pick a slot</h4><p>We share available appointment times and confirm one that suits you. Appointment-led scheduling means little to no waiting when you arrive.</p></div>
+      <div class="tstep reveal"><div class="n">3</div><h4>Your consultation</h4><p>An unhurried, non-judgmental conversation in a safe, hygienic space. You're examined carefully and everything is explained in plain language — in the language you're comfortable in.</p></div>
+      <div class="tstep reveal"><div class="n">4</div><h4>A clear plan</h4><p>You leave knowing exactly what's happening and why. Any tests or treatments are recommended only when genuinely needed.</p></div>
+      <div class="tstep reveal"><div class="n">5</div><h4>Ongoing care</h4><p>We stay with you — through pregnancy and recovery, fertility, PCOS, heart conditions and follow-ups — so you're never navigating your health alone.</p></div>
+    </div>
+  </section>
+
+  <section class="section bg-soft">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>Ready when you are</h2>
+        <p>Start your journey with a single message. We'll take care of the rest.</p>
+        <div class="btns">
+          <a class="btn btn-white btn-lg" id="waCta" target="_blank" rel="noopener">Start on WhatsApp</a>
+          <a class="btn btn-ghost btn-lg" href="contact.html">Contact &amp; location</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer-slot"></div>
+
+  <script src="js/site.js"></script>
+  <script>
+    document.getElementById("waCta").href =
+      `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hi Sugata Clinic, I'd like to start booking a consultation.")}`;
+    document.querySelectorAll(".reveal").forEach(e => e.classList.add("in"));
+  </script>
+</body>
+</html>

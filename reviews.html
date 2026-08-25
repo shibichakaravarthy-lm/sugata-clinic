@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) — GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-846S2LVMRY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-846S2LVMRY');
+  </script>
+
+  <title>Reviews | Sugata Heart & Women's Wellness Clinic</title>
+  <meta name="description" content="What patients say about Dr. Roshana and Dr. Mukul at Sugata Clinic, Indiranagar." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX449K9H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="site-header-slot"></div>
+
+  <section class="hero" style="padding:56px 0 30px">
+    <div class="wrap center reveal">
+      <span class="eyebrow">Patient reviews</span>
+      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Kind words from the Sugata family</h1>
+      <p class="section-lead" style="margin:0 auto">Real experiences from women and families we've had the privilege to care for.</p>
+      <div class="hero-badges" style="justify-content:center;margin-top:22px">
+        <a class="pill" id="gRating" target="_blank" rel="noopener" style="font-weight:600"><span style="color:#f5a623;letter-spacing:1px">★★★★★</span> 5.0 on Google · 1000s of reviews</a>
+        <span class="pill"><span class="dot" style="background:#f5a623"></span> Loved for compassionate care</span>
+        <span class="pill"><span class="dot" style="background:#f5a623"></span> Trusted for honest advice</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:40px">
+    <div class="wrap rev-grid" id="allReviews"></div>
+    <p class="wrap center" style="color:var(--muted);font-size:.9rem;margin-top:30px">
+      These are genuine reviews from patients.
+      <a id="allG" target="_blank" rel="noopener" style="color:var(--magenta);font-weight:600">See all reviews on Google →</a>
+    </p>
+  </section>
+
+  <section class="section bg-soft">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>Experienced our care?</h2>
+        <p>We'd love to hear from you — your words help other patients feel confident about reaching out.</p>
+        <div class="btns">
+          <a class="btn btn-white btn-lg" id="waCta" target="_blank" rel="noopener">Share your experience</a>
+          <a class="btn btn-ghost btn-lg" href="contact.html">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer-slot"></div>
+
+  <script src="js/site.js"></script>
+  <script src="js/reviews-data.js"></script>
+  <script>
+    document.getElementById("waCta").href =
+      `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hi Sugata Clinic, I'd like to share my experience.")}`;
+    document.getElementById("gRating").href = SITE.mapLink;
+    document.getElementById("allG").href = SITE.mapLink;
+    document.getElementById("allReviews").innerHTML = REVIEWS.map(revCard).join("");
+    document.querySelectorAll(".reveal").forEach(e => e.classList.add("in"));
+  </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) — GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-846S2LVMRY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-846S2LVMRY');
+  </script>
+
+  <title>Services — What We Care For | Sugata Clinic, Indiranagar</title>
+  <meta name="description" content="Women's health organised by life stage — adolescence to menopause — plus complete cardiac care. Explore Sugata Clinic's services." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX449K9H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="site-header-slot"></div>
+
+  <section class="hero" style="padding:56px 0 30px">
+    <div class="wrap center reveal">
+      <span class="eyebrow">What we care for</span>
+      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Complete care, thoughtfully organised</h1>
+      <p class="section-lead" style="margin:0 auto">
+        Women's health is deeply tied to your life stage, so we've organised it that way —
+        from adolescence through the reproductive years to menopause. Heart care spans prevention to intervention.
+        Every box below opens a short, clear guide.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:40px">
+    <div class="wrap" id="svcCatalogue"></div>
+  </section>
+
+  <section class="section bg-soft">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>Not sure which service you need?</h2>
+        <p>Tell us what's on your mind — we'll guide you to the right specialist, with no judgment and minimal waiting.</p>
+        <div class="btns">
+          <a class="btn btn-white btn-lg" id="waCta" target="_blank" rel="noopener">Ask on WhatsApp</a>
+          <a class="btn btn-ghost btn-lg" href="contact.html">Contact us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer-slot"></div>
+
+  <script src="js/services-data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    document.getElementById("waCta").href =
+      `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hi Sugata Clinic, I'd like help choosing the right consultation.")}`;
+
+    const card = svcCardHTML;
+
+    let html = "";
+    CATEGORIES.forEach((c) => {
+      const count = c.stages.reduce((n, st) => n + st.ids.length, 0);
+      const label = c.key === 'gyn' ? "Women's Health" : "Heart Health";
+      html += `<div id="${c.key}" class="doc-svc-head ${c.key}">
+        <span class="chip ${c.key}">${label}</span>
+        <h2>${c.doctor}</h2>
+        <p class="doc-svc-role">${c.role} &nbsp;·&nbsp; ${count} services</p>
+        <a class="btn ${c.key === 'gyn' ? 'btn-primary' : 'btn-cardiac'}" href="${c.link}">View full profile</a>
+      </div>`;
+      c.stages.forEach((st) => {
+        html += `<h4 class="svc-stage-label">${st.stage}</h4>`;
+        html += `<div class="svc-grid" style="margin-bottom:10px">${st.ids.map(card).join("")}</div>`;
+      });
+    });
+    document.getElementById("svcCatalogue").innerHTML = html;
+
+    // re-run reveal for injected nodes
+    document.querySelectorAll(".reveal").forEach((e)=>{
+      new IntersectionObserver((en,o)=>{en.forEach(x=>{if(x.isIntersecting){x.target.classList.add("in");o.unobserve(x.target);}})},{threshold:.1}).observe(e);
+    });
+  </script>
+</body>
+</html>

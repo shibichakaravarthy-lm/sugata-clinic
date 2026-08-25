@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
+  <!-- End Google Tag Manager -->
+
+  <!-- Google tag (gtag.js) — GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-846S2LVMRY"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-846S2LVMRY');
+  </script>
+
+  <title>Book a Consultation — Our Doctors | Sugata Clinic, Indiranagar</title>
+  <meta name="description" content="Book a consultation at Sugata Clinic, Indiranagar — Dr. Roshana Fulmali (Obstetrician, Gynaecologist & Fertility Specialist) and Dr. Mukul R Fulmali (Consultant Cardiologist). Consulting hours, specialities and languages." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TX449K9H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+  <div id="site-header-slot"></div>
+
+  <!-- HERO -->
+  <section class="hero" style="padding:56px 0 30px">
+    <div class="wrap center reveal">
+      <span class="eyebrow">Book a consultation</span>
+      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Our doctors at Indiranagar</h1>
+      <p class="section-lead" style="margin:0 auto">
+        Two specialists, one clinic. Pick the doctor you need and message us —
+        we'll confirm a time that suits you.
+      </p>
+    </div>
+  </section>
+
+  <!-- LISTING -->
+  <section class="section" style="padding-top:34px">
+    <div class="wrap reveal">
+      <div class="dr-bar">
+        <div class="dr-field">
+          <label for="clinicSel">Clinic</label>
+          <select id="clinicSel">
+            <option>Indiranagar Clinic</option>
+          </select>
+        </div>
+        <div class="dr-field">
+          <label for="specSel">Specialization</label>
+          <select id="specSel">
+            <option value="all">All</option>
+            <option value="gyn">Women's Health &amp; Fertility</option>
+            <option value="car">Heart &amp; Cardiac Care</option>
+          </select>
+        </div>
+        <div class="dr-bar-cta">
+          <a class="btn btn-primary" id="barCta" target="_blank" rel="noopener">Check available slots</a>
+        </div>
+      </div>
+
+      <p class="dr-count" id="drCount"></p>
+      <div class="dr-list" id="drList"></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section bg-soft" style="padding-top:0">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <h2>Not sure whom to see?</h2>
+        <p>Tell us what you're experiencing and we'll guide you to the right specialist — women's health or heart care.</p>
+        <div class="btns">
+          <a class="btn btn-white btn-lg" id="askCta" target="_blank" rel="noopener">Ask on WhatsApp</a>
+          <a class="btn btn-ghost btn-lg" href="contact.html">Contact &amp; location</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="site-footer-slot"></div>
+
+  <script src="js/services-data.js"></script>
+  <script src="js/site.js"></script>
+  <script>
+    /* ============================================================
+       CONSULTATION FEES — edit here only.
+       Set `amount` (number, in ₹) and `mins` for each doctor.
+       Leave amount as null to show "Fee on request" instead.
+       ============================================================ */
+    const FEES = {
+      roshana: { label: "Gynaecologist Consultation · Clinic", amount: null, mins: null },
+      mukul:   { label: "Cardiology Consultation · Clinic",    amount: null, mins: null },
+    };
+
+    const DOCTORS = [
+      {
+        key: "roshana", cat: "gyn", tag: "Gynaecology",
+        name: "Dr. Roshana Fulmali",
+        cred: "MBBS, DGO, OBGY, FRM",
+        exp: "15+ years of experience",
+        photo: "assets/doctors/roshana-sq.jpg",
+        langs: "English, Hindi, Kannada, Marathi, Tamil, Telugu",
+        hours: "Mon – Sat · 9:30 AM – 8:30 PM<br>Sunday · 12:00 PM – 2:00 PM",
+        profile: "dr-roshana.html",
+        wa: "Hi Sugata Clinic, I'd like to book a consultation with Dr. Roshana.",
+      },
+      {
+        key: "mukul", cat: "car", tag: "Cardiology",
+        name: "Dr. Mukul R Fulmali",
+        cred: "MBBS, MD, DNB, FSCAI",
+        exp: "15+ years of experience",
+        photo: "assets/doctors/mukul-sq.jpg",
+        langs: "English, Hindi, Kannada, Marathi",
+        hours: "Mon – Sat · 6:00 PM – 8:30 PM",
+        profile: "dr-mukul.html",
+        wa: "Hi Sugata Clinic, I'd like to book a consultation with Dr. Mukul.",
+      },
+    ];
+
+    const wa = (m) => `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(m)}`;
+
+    /* speciality chips come straight from the service catalogue */
+    const chipsFor = (key) =>
+      Object.entries(SERVICES)
+        .filter(([, s]) => s.doctor === key)
+        .map(([id, s]) => `<a class="c" href="service.html?id=${id}">${s.title}</a>`)
+        .join("");
+
+    const feeHTML = (key) => {
+      const f = FEES[key];
+      return f.amount == null
+        ? `<span class="dr-fee ask">Fee on request</span>`
+        : `<span class="dr-fee">₹${f.amount}${f.mins ? ` <span class="mins">(${f.mins} mins)</span>` : ""}</span>`;
+    };
+
+    const ICON_LANG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h11"/><path d="M8 3v2c0 4.4-2.2 7.5-5 9"/><path d="M5 9c0 2.5 2.6 4.9 6 6"/><path d="M12 20l4.5-10 4.5 10"/><path d="M14 16h5.5"/></svg>`;
+    const ICON_CLOCK = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>`;
+
+    const cardHTML = (d) => `
+      <article class="dr-card ${d.cat}">
+        <span class="dr-tag">${d.tag}</span>
+        <div class="dr-main">
+          <div class="dr-top">
+            <img class="dr-photo" src="${d.photo}" alt="${d.name}" loading="lazy">
+            <div>
+              <h3>${d.name}</h3>
+              <p class="dr-cred">${d.cred}</p>
+              <p class="dr-exp">${d.exp}</p>
+            </div>
+          </div>
+          <div class="dr-chips">${chipsFor(d.key)}</div>
+          <div class="dr-meta">${ICON_LANG}<div><span class="k">Speaks</span><strong>${d.langs}</strong></div></div>
+          <div class="dr-meta">${ICON_CLOCK}<div><span class="k">Consulting hours</span><strong>${d.hours}</strong></div></div>
+          <a class="dr-profile-link" href="${d.profile}">View full profile →</a>
+        </div>
+        <div class="dr-foot">
+          <div>
+            <span class="dr-svc">${FEES[d.key].label}</span>
+            ${feeHTML(d.key)}
+          </div>
+          <a class="btn ${d.cat === "car" ? "btn-cardiac" : "btn-primary"}" href="${wa(d.wa)}" target="_blank" rel="noopener">Book</a>
+        </div>
+      </article>`;
+
+    const listEl = document.getElementById("drList");
+    const countEl = document.getElementById("drCount");
+
+    function render(spec) {
+      const shown = DOCTORS.filter((d) => spec === "all" || d.cat === spec);
+      listEl.innerHTML = shown.length
+        ? shown.map(cardHTML).join("")
+        : `<p class="dr-empty">No doctors match that speciality.</p>`;
+      countEl.textContent =
+        `${shown.length} doctor${shown.length === 1 ? "" : "s"} · Indiranagar Clinic, Bengaluru`;
+    }
+
+    document.getElementById("specSel").addEventListener("change", (e) => render(e.target.value));
+    render("all");
+
+    document.getElementById("barCta").href = wa("Hi Sugata Clinic, could you share the available consultation slots?");
+    document.getElementById("askCta").href = wa("Hi Sugata Clinic, I'm not sure which doctor I should see — could you help me?");
+    document.querySelectorAll(".reveal").forEach((e) => e.classList.add("in"));
+  </script>
+</body>
+</html>
