@@ -241,8 +241,72 @@ function initCountUp() {
   nums.forEach((n) => io.observe(n));
 }
 
+/* ---------- Analytics: conversion events ----------
+   Everything is pushed to the GTM dataLayer (container GTM-TX449K9H).
+   Nothing here talks to GA4 directly — build the GA4 event tags and the
+   matching Custom Event triggers inside GTM. Event names pushed:
+     whatsapp_click · call_click · contact_form_submit
+   -------------------------------------------------- */
+
+function track(event, params) {
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(Object.assign({ event: event }, params || {}));
+}
+
+/* Which CTA was clicked — lets the dashboard tell the floating WhatsApp
+   bubble apart from the footer link, the hero button or the contact form. */
+function ctaLocation(el) {
+  if (el.closest(".wa-float")) return "floating_button";
+  if (el.closest("#contactForm")) return "contact_form";
+  if (el.closest(".site-header")) return "header";
+  if (el.closest(".site-footer")) return "footer";
+  if (el.closest(".hero")) return "hero";
+  return "page";
+}
+
+function labelFor(a) {
+  const text = (a.textContent || "").replace(/\s+/g, " ").trim();
+  return (text || (a.getAttribute("aria-label") || "").trim()).slice(0, 100);
+}
+
+function initTracking() {
+  /* Delegated from document so it also covers the header/footer that
+     mountChrome() injects, and any link added later. */
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest("a[href]");
+    if (!a) return;
+    const href = a.getAttribute("href") || "";
+
+    if (href.indexOf("wa.me") !== -1) {
+      track("whatsapp_click", {
+        cta_location: ctaLocation(a),
+        cta_text: labelFor(a) || "WhatsApp",
+        page_path: location.pathname,
+      });
+    } else if (href.indexOf("tel:") === 0) {
+      track("call_click", {
+        cta_location: ctaLocation(a),
+        phone_number: href.slice(4),
+        page_path: location.pathname,
+      });
+    }
+  });
+
+  /* Contact form. This still fires even though contact.html's own handler
+     calls preventDefault() — that stops the navigation, not the bubbling. */
+  document.addEventListener("submit", (e) => {
+    const form = e.target.closest("#contactForm");
+    if (!form) return;
+    track("contact_form_submit", {
+      doctor: form.doctor ? form.doctor.value : "",
+      page_path: location.pathname,
+    });
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   mountChrome();
   initReveal();
   initCountUp();
+  initTracking();
 });

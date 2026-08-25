@@ -63,3 +63,36 @@ Both pulled from the logo so the two doctors read distinctly but stay on-brand.
 - **Live booking slots** and **WhatsApp auto-reply** need a booking tool / WhatsApp
   Business API. Right now every "Book" button opens WhatsApp with a pre-filled message
   (reliable, works today). Wire up the automation when that service is chosen.
+
+## Analytics (Google Tag Manager)
+
+The site loads **one** tag: GTM container `GTM-TX449K9H`, inline at the top of
+`<head>` on every page. There is no direct `gtag.js` — **GA4 (`G-846S2LVMRY`)
+must be configured as a tag inside GTM**, or no data reaches the dashboard.
+
+### Required GTM setup (one-time, in the GTM UI)
+1. **GA4 Configuration tag** → Measurement ID `G-846S2LVMRY`, trigger *All Pages*.
+   This alone gives you page views.
+2. **Conversion events** — the site pushes these to `dataLayer` (see
+   `initTracking()` in `js/site.js`). For each one, create a *Custom Event*
+   trigger with the matching event name, and a **GA4 Event** tag that uses it:
+
+   | Event name | Fires when | Parameters sent |
+   |---|---|---|
+   | `whatsapp_click` | any WhatsApp link/button is clicked | `cta_location`, `cta_text`, `page_path` |
+   | `call_click` | any `tel:` phone link is clicked | `cta_location`, `phone_number`, `page_path` |
+   | `contact_form_submit` | the contact form is submitted | `doctor`, `page_path` |
+
+   `cta_location` is one of `floating_button`, `contact_form`, `header`,
+   `footer`, `hero`, `page` — so you can see which CTA actually converts.
+3. Register the parameters as **custom dimensions** in GA4
+   (*Admin → Custom definitions*) if you want them in reports, then mark
+   the events as **key events** (*Admin → Events*) to count them as conversions.
+4. **Publish the container.** An unpublished GTM container loads and does nothing.
+
+### Verifying
+GTM *Preview* mode, or DevTools → Network filtered to `googletagmanager` —
+`gtm.js?id=GTM-TX449K9H` should return 200, and clicking a WhatsApp button
+should produce a `collect?...tid=G-846S2LVMRY` request. GA4 → *Realtime*
+shows it within ~30s. Standard reports lag 24–48h. Ad blockers block all of
+this, so test in a clean browser profile.
