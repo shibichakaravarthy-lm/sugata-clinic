@@ -57,33 +57,163 @@ const waLink = (msg) =>
     msg || "Hi Sugata Clinic, I'd like to book a consultation."
   )}`;
 
-/* ---------- NAV ---------- */
+/* ---------- NAV ----------
+   Top level stays short. Anything with a `menu` renders as a hover
+   dropdown on desktop and a tap-to-expand accordion on mobile.
+   A menu is a list of columns: { title, tone, items:[{href,label,note}] }.
+   Keep these links curated — this is a shortcut list, not a sitemap.
+   ------------------------------------------------------------------ */
 const NAV = [
-  { label: "Home", href: "index.html" },
-  { label: "Services", href: "services.html" },
-  { label: "Diagnostics", href: "diagnostics.html" },
-  { label: "Dr. Roshana", href: "dr-roshana.html" },
-  { label: "Dr. Mukul", href: "dr-mukul.html" },
-  { label: "Your Journey", href: "journey.html" },
-  { label: "Reviews", href: "reviews.html" },
-  { label: "Contact", href: "contact.html" },
+  /* No "Home" item — the logo is the route home, as users expect. */
+  {
+    label: "Our Doctors",
+    href: "doctors.html",
+    menu: [
+      {
+        items: [
+          { href: "dr-roshana.html", label: "Dr. Roshana Fulmali",
+            note: "Obstetrics, Gynaecology & Fertility", tone: "gyn" },
+          { href: "dr-mukul.html", label: "Dr. Mukul R Fulmali",
+            note: "Consultant Cardiologist", tone: "car" },
+          { href: "doctors.html", label: "Compare & book a consultation",
+            note: "See both doctors side by side" },
+        ],
+      },
+    ],
+  },
+
+  {
+    label: "Services",
+    href: "services.html",
+    menu: [
+      {
+        title: "Women's Health", tone: "gyn",
+        items: [
+          { href: "service.html?id=pregnancy-antenatal", label: "Pregnancy & Antenatal Care" },
+          { href: "service.html?id=safe-vaginal-delivery", label: "Safe Vaginal Delivery" },
+          { href: "service.html?id=ivf-icsi", label: "Fertility, IVF & ICSI" },
+          { href: "service.html?id=pcos", label: "PCOS & Hormonal Health" },
+          { href: "service.html?id=menstrual-health", label: "Menstrual Health" },
+          { href: "service.html?id=cancer-screening", label: "Cancer Screening" },
+          { href: "service.html?id=menopause", label: "Menopause & Midlife" },
+        ],
+      },
+      {
+        title: "Heart & Cardiac", tone: "car",
+        items: [
+          { href: "service.html?id=coronary-artery-disease", label: "Coronary Artery Disease" },
+          { href: "service.html?id=heart-attack", label: "Heart Attack Care" },
+          { href: "service.html?id=angiography-angioplasty", label: "Angiography & Angioplasty" },
+          { href: "service.html?id=heart-failure", label: "Heart Failure" },
+          { href: "service.html?id=hypertension", label: "Blood Pressure" },
+          { href: "service.html?id=arrhythmia", label: "Arrhythmia & Pacing" },
+          { href: "services.html", label: "View all services →" },
+        ],
+      },
+    ],
+  },
+
+  {
+    label: "Diagnostics",
+    href: "diagnostics.html",
+    menu: [
+      {
+        items: [
+          { href: "diagnostics.html#lab-tests", label: "Lab Tests" },
+          { href: "diagnostics.html#home-collection", label: "Home Sample Collection" },
+          { href: "diagnostics.html#ultrasound", label: "Ultrasound & Scans" },
+          { href: "diagnostics.html#ecg", label: "ECG" },
+          { href: "diagnostics.html#echo", label: "Echocardiography" },
+          { href: "diagnostics.html", label: "All diagnostics →" },
+        ],
+      },
+    ],
+  },
+
+  {
+    label: "Visit Us",
+    href: "contact.html",
+    menu: [
+      {
+        items: [
+          { href: "journey.html", label: "Your Journey", note: "What to expect, step by step" },
+          { href: "reviews.html", label: "Patient Reviews" },
+          { href: "contact.html", label: "Contact & Location", note: "Address, timings and map" },
+        ],
+      },
+    ],
+  },
 ];
 
+/* Reduces a URL or a nav href to a bare page key, so the active state works
+   whether the host serves "/contact.html", "/contact" (Netlify pretty URLs)
+   or "/" for the homepage. */
+function pageKey(path) {
+  const clean = (path || "").split("?")[0].split("#")[0].replace(/\/+$/, "");
+  const last = clean.split("/").pop();
+  const name = last.toLowerCase().replace(/\.html$/, "");
+  if (name === "" || name === "index") return "index";
+  /* a single service page belongs under the Services nav item */
+  if (name === "service") return "services";
+  return name;
+}
+
 function currentPage() {
-  const p = location.pathname.split("/").pop();
-  return p === "" ? "index.html" : p;
+  return pageKey(location.pathname);
+}
+
+const CARET =
+  '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+
+/* A top-level item counts as active when its own page is open or when any
+   link inside its dropdown points at the current page. */
+function navIsActive(item, active) {
+  if (pageKey(item.href) === active) return true;
+  return (item.menu || []).some((col) =>
+    col.items.some((l) => pageKey(l.href) === active)
+  );
+}
+
+function navMenuHTML(menu) {
+  const cols = menu
+    .map((col) => {
+      const title = col.title
+        ? `<span class="nav-menu-title ${col.tone || ""}">${col.title}</span>`
+        : "";
+      const items = col.items
+        .map(
+          (l) =>
+            `<a href="${l.href}" class="${l.tone || ""}">
+               <span class="l">${l.label}</span>
+               ${l.note ? `<span class="n">${l.note}</span>` : ""}
+             </a>`
+        )
+        .join("");
+      return `<div class="nav-menu-col">${title}${items}</div>`;
+    })
+    .join("");
+  return `<div class="nav-menu"><div class="nav-menu-inner">${cols}</div></div>`;
 }
 
 function buildHeader() {
   const active = currentPage();
-  const links = NAV.map(
-    (n) =>
-      `<a href="${n.href}" class="${n.href === active ? "active" : ""}">${n.label}</a>`
-  ).join("");
+  const links = NAV.map((n) => {
+    const on = navIsActive(n, active) ? "active" : "";
+    if (!n.menu) {
+      return `<div class="nav-item"><a href="${n.href}" class="nav-top ${on}">${n.label}</a></div>`;
+    }
+    return `<div class="nav-item has-menu">
+      <a href="${n.href}" class="nav-top ${on}" aria-haspopup="true" aria-expanded="false">${n.label}${CARET}</a>
+      <button class="nav-caret" type="button" aria-label="Show ${n.label} links" tabindex="-1">${CARET}</button>
+      ${navMenuHTML(n.menu)}
+    </div>`;
+  }).join("");
+
   return `
   <header class="site-header">
     <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="Sugata Clinic home">
+      <a class="brand" href="index.html" aria-label="Sugata Clinic home"${
+        active === "index" ? ' aria-current="page"' : ""}>
         <img src="assets/logo.png" alt="Sugata Heart & Women's Wellness Clinic"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
         <span class="brand-fallback" style="display:none">
@@ -91,8 +221,8 @@ function buildHeader() {
           <span class="b2">HEART &amp; WOMEN'S WELLNESS</span>
         </span>
       </a>
-      <nav class="nav-links" id="navLinks">${links}<a href="doctors.html"
-        class="nav-mobile-only ${active === "doctors.html" ? "active" : ""}">Book Consultation</a></nav>
+      <nav class="nav-links" id="navLinks">${links}<div class="nav-item nav-mobile-only"><a
+        href="doctors.html" class="nav-top">Book Consultation</a></div></nav>
       <div class="nav-cta">
         <a class="btn btn-primary" href="doctors.html">Book Consultation</a>
       </div>
@@ -111,22 +241,20 @@ function buildFooter() {
         <div class="foot-about">
           <div class="foot-logo">
             <img src="assets/logo.png" alt="Sugata Heart & Women's Wellness Clinic"
-                 onerror="this.parentNode.innerHTML='<span class=\\'b1\\'>Sugata</span><span class=\\'b2\\'>HEART &amp; WOMEN\\'S WELLNESS CLINIC</span>';this.parentNode.classList.add('foot-brand');this.parentNode.classList.remove('foot-logo');">
+                 onerror="this.parentNode.innerHTML='<span class=\'b1\'>Sugata</span><span class=\'b2\'>HEART &amp; WOMEN\'S WELLNESS CLINIC</span>';this.parentNode.classList.add('foot-brand');this.parentNode.classList.remove('foot-logo');">
           </div>
-          <p>Two dedicated specialists under one roof in Indiranagar, Bengaluru —
-             compassionate, non-judgmental care for every woman, and complete heart care for every family.</p>
-          <a class="btn btn-primary" href="${waLink()}" target="_blank" rel="noopener">Book an Appointment</a>
+          <p>Compassionate women's health and complete heart care — two specialists under one roof.</p>
+          <a class="btn btn-primary btn-sm" href="${waLink()}" target="_blank" rel="noopener">Book an Appointment</a>
           ${socialBlock()}
         </div>
 
         <div>
           <h4>Explore</h4>
           <ul class="foot-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="doctors.html">Our Doctors</a></li>
             <li><a href="services.html">Services</a></li>
             <li><a href="diagnostics.html">Diagnostics</a></li>
-            <li><a href="doctors.html">Book a consultation</a></li>
-            <li><a href="dr-roshana.html">Dr. Roshana</a></li>
-            <li><a href="dr-mukul.html">Dr. Mukul</a></li>
             <li><a href="journey.html">Your Journey</a></li>
             <li><a href="reviews.html">Reviews</a></li>
             <li><a href="contact.html">Contact</a></li>
@@ -134,33 +262,17 @@ function buildFooter() {
         </div>
 
         <div>
-          <h4>Our Two Services</h4>
-          <div class="foot-services">
-            <div class="foot-service">
-              <strong>Women's Health</strong>
-              <span>Compassionate obstetric &amp; gynaecological care</span>
-            </div>
-            <div class="foot-service car">
-              <strong>Heart Health</strong>
-              <span>Complete cardiac care</span>
-            </div>
-            <div style="font-size:.85rem;margin-top:6px;">Indiranagar, Bengaluru</div>
-          </div>
-        </div>
-
-        <div>
           <h4>Reach Us</h4>
-          <ul class="foot-links">
+          <ul class="foot-links foot-reach">
             <li><a href="tel:${SITE.phone}">${SITE.phoneDisplay}</a></li>
             <li><a href="${waLink()}" target="_blank" rel="noopener">WhatsApp us</a></li>
-            <li style="line-height:1.5">${SITE.addressFull}</li>
+            <li class="addr">3rd Floor, Jeevan Bima Nagar Main Rd,<br>above Kanti Sweets, Indiranagar,<br>Bengaluru 560075</li>
             <li><a href="${SITE.mapLink}" target="_blank" rel="noopener">Open in Google Maps →</a></li>
           </ul>
         </div>
       </div>
       <div class="foot-bottom">
-        <span>© <span id="yr"></span> ${SITE.name}. All rights reserved.</span>
-        <span>Jeevan Bima Nagar · Indiranagar · Bengaluru 560075</span>
+        <span>&copy; <span id="yr"></span> ${SITE.name}. All rights reserved.</span>
       </div>
     </div>
   </footer>
@@ -185,6 +297,29 @@ function mountChrome() {
     links.querySelectorAll("a").forEach((a) =>
       a.addEventListener("click", () => links.classList.remove("open"))
     );
+
+    /* Mobile accordion. The caret is a separate control from the link, so
+       tapping "Services" still opens the Services page while the caret
+       expands its shortcuts. On desktop the caret is hidden and :hover
+       drives the dropdown instead. */
+    links.querySelectorAll(".nav-caret").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const item = btn.closest(".nav-item");
+        const wasOpen = item.classList.contains("open");
+        links.querySelectorAll(".nav-item.open").forEach((o) => {
+          o.classList.remove("open");
+          const t = o.querySelector(".nav-top");
+          if (t) t.setAttribute("aria-expanded", "false");
+        });
+        if (!wasOpen) {
+          item.classList.add("open");
+          const t = item.querySelector(".nav-top");
+          if (t) t.setAttribute("aria-expanded", "true");
+        }
+      });
+    });
   }
 }
 
