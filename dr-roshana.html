@@ -12,6 +12,16 @@
   })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
   <!-- End Google Tag Manager -->
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-88D3MYG22N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-88D3MYG22N');
+  </script>
+
   <title>Dr. Roshana Fulmali — Obstetrician, Gynaecologist & Fertility Specialist | Sugata</title>
   <meta name="description" content="Dr. Roshana Fulmali — MBBS, DGO, OBGY, FRM. 15+ years in obstetrics, gynaecology and fertility. Safe delivery, VBAC, natural conception, PCOS and IVF/ICSI at Sugata Clinic, Indiranagar." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,7 +61,8 @@
           <div class="s"><div class="num">1000s</div><div class="lbl">Women cared for</div></div>
         </div>
         <div class="hero-ctas">
-          <a class="btn btn-primary btn-lg" id="waCta" target="_blank" rel="noopener">Book a Gynae Consultation</a>
+          <a class="btn btn-primary btn-lg" id="waCta" target="_blank" rel="noopener"
+             data-book data-book-spec="gyn" data-book-src="doctor_page">Book a Gynae Consultation</a>
           <a class="btn btn-ghost btn-lg" href="services.html">Women's health services</a>
         </div>
       </div>
@@ -129,7 +140,8 @@
         <h2>Your health deserves an unhurried, honest conversation</h2>
         <p>Non-judgmental, hygienic and inclusive care — with minimal waiting. Book a consultation with Dr. Roshana today.</p>
         <div class="btns">
-          <a class="btn btn-white btn-lg" id="waCta2" target="_blank" rel="noopener">Book on WhatsApp</a>
+          <a class="btn btn-white btn-lg" id="waCta2" target="_blank" rel="noopener"
+             data-book data-book-spec="gyn" data-book-src="doctor_page_band">Book on WhatsApp</a>
           <a class="btn btn-ghost btn-lg" href="contact.html">Call the clinic</a>
         </div>
       </div>
@@ -140,6 +152,7 @@
 
   <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
+  <script src="js/booking.js"></script>
   <script>
     const wa = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hi Sugata Clinic, I'd like to book a gynae consultation with Dr. Roshana.")}`;
     document.getElementById("waCta").href = wa;

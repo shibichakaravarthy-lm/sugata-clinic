@@ -222,9 +222,9 @@ function buildHeader() {
         </span>
       </a>
       <nav class="nav-links" id="navLinks">${links}<div class="nav-item nav-mobile-only"><a
-        href="doctors.html" class="nav-top">Book Consultation</a></div></nav>
+        href="doctors.html" class="nav-top" data-book data-book-src="header">Book Consultation</a></div></nav>
       <div class="nav-cta">
-        <a class="btn btn-primary" href="doctors.html">Book Consultation</a>
+        <a class="btn btn-primary" href="doctors.html" data-book data-book-src="header">Book Consultation</a>
       </div>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -244,7 +244,8 @@ function buildFooter() {
                  onerror="this.parentNode.innerHTML='<span class=\'b1\'>Sugata</span><span class=\'b2\'>HEART &amp; WOMEN\'S WELLNESS CLINIC</span>';this.parentNode.classList.add('foot-brand');this.parentNode.classList.remove('foot-logo');">
           </div>
           <p>Compassionate women's health and complete heart care — two specialists under one roof.</p>
-          <a class="btn btn-primary btn-sm" href="${waLink()}" target="_blank" rel="noopener">Book an Appointment</a>
+          <a class="btn btn-primary btn-sm" href="${waLink()}" target="_blank" rel="noopener"
+             data-book data-book-src="footer">Book an Appointment</a>
           ${socialBlock()}
         </div>
 
@@ -377,20 +378,36 @@ function initCountUp() {
 }
 
 /* ---------- Analytics: conversion events ----------
-   Everything is pushed to the GTM dataLayer (container GTM-TX449K9H).
-   Nothing here talks to GA4 directly — build the GA4 event tags and the
-   matching Custom Event triggers inside GTM. Event names pushed:
-     whatsapp_click · call_click · contact_form_submit
+   Two tag systems, each reading a different thing, each owning a
+   different job — see docs/gtm-setup.md.
+
+   - gtag.js (G-88D3MYG22N) owns GA4. It ignores raw dataLayer pushes and
+     only acts on gtag() calls, so without the gtag("event") line below GA4
+     would record page views and none of these events.
+   - GTM (GTM-TX449K9H) owns Google Ads conversions and remarketing. It
+     reads the dataLayer push and matches it with a Custom Event trigger.
+
+   HARD RULE: never add a GA4 tag for G-88D3MYG22N inside GTM. gtag.js is
+   already sending these events to that property — a GA4 tag in GTM would
+   send each one a second time and silently double every number.
+
+   Events: whatsapp_click · call_click · contact_form_submit ·
+           booking_open · booking_step · booking_submit ·
+           booking_result · booking_abandon
    -------------------------------------------------- */
 
 function track(event, params) {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(Object.assign({ event: event }, params || {}));
+  window.dataLayer.push(Object.assign({ event: event }, params || {}));  /* GTM */
+  if (typeof gtag === "function") gtag("event", event, params || {});    /* GA4 */
 }
 
 /* Which CTA was clicked — lets the dashboard tell the floating WhatsApp
    bubble apart from the footer link, the hero button or the contact form. */
 function ctaLocation(el) {
+  /* The modal is a body-level sibling of .hero/.site-footer, so without
+     this branch every in-modal WhatsApp click would report as "page". */
+  if (el.closest(".bk-modal")) return "booking_modal";
   if (el.closest(".wa-float")) return "floating_button";
   if (el.closest("#contactForm")) return "contact_form";
   if (el.closest(".site-header")) return "header";

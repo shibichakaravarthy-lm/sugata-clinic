@@ -12,6 +12,16 @@
   })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
   <!-- End Google Tag Manager -->
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-88D3MYG22N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-88D3MYG22N');
+  </script>
+
   <title>Diagnostics — Lab Tests, Ultrasound, ECG &amp; ECHO | Sugata Clinic, Indiranagar</title>
   <meta name="description" content="Diagnostics at Sugata Clinic, Indiranagar — lab tests with home sample collection, ultrasound scans, ECG and ECHO. Consultation, testing and reports in one place." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -37,7 +47,8 @@
         and your doctor sees your results the same visit.
       </p>
       <div class="hero-ctas" style="justify-content:center;margin-top:26px">
-        <a class="btn btn-primary btn-lg" id="diagCta" target="_blank" rel="noopener">Book a test on WhatsApp</a>
+        <a class="btn btn-primary btn-lg" id="diagCta" target="_blank" rel="noopener"
+             data-book data-book-type="lab" data-book-src="diagnostics_hero">Book a test on WhatsApp</a>
         <a class="btn btn-ghost btn-lg" href="contact.html">Contact &amp; location</a>
       </div>
     </div>
@@ -133,7 +144,8 @@
           <li>Routine follow-up tests between consultations</li>
         </ul>
         <div class="foot">
-          <a class="btn btn-primary" id="homeCta" target="_blank" rel="noopener">Request home collection</a>
+          <a class="btn btn-primary" id="homeCta" target="_blank" rel="noopener"
+            data-book data-book-type="lab" data-book-note="Home sample collection" data-book-src="diagnostics_home">Request home collection</a>
         </div>
       </div>
 
@@ -258,7 +270,8 @@
         <h2>Book a test at Sugata</h2>
         <p>Message us with what your doctor has advised, or simply describe what you're experiencing — we'll take it from there.</p>
         <div class="btns">
-          <a class="btn btn-white btn-lg" id="waCta" target="_blank" rel="noopener">Book on WhatsApp</a>
+          <a class="btn btn-white btn-lg" id="waCta" target="_blank" rel="noopener"
+             data-book data-book-type="lab" data-book-src="diagnostics_band">Book on WhatsApp</a>
           <a class="btn btn-ghost btn-lg" href="services.html">See all services</a>
         </div>
       </div>
@@ -267,7 +280,9 @@
 
   <div id="site-footer-slot"></div>
 
+  <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
+  <script src="js/booking.js"></script>
   <script>
     const wa = (m) => `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(m)}`;
     document.getElementById("diagCta").href = wa("Hi Sugata Clinic, I'd like to book a diagnostic test (lab test / ultrasound / ECG / ECHO).");

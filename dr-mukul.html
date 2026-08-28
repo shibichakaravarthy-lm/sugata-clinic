@@ -12,6 +12,16 @@
   })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
   <!-- End Google Tag Manager -->
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-88D3MYG22N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-88D3MYG22N');
+  </script>
+
   <title>Dr. Mukul R Fulmali — Consultant Cardiologist | Sugata Clinic, Bengaluru</title>
   <meta name="description" content="Dr. Mukul R Fulmali — MBBS, MD, DNB, FSCAI. 15+ years in cardiology. Coronary artery disease, heart attack, angioplasty, pacemakers and device closure at Sugata Clinic, Indiranagar." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -51,7 +61,8 @@
           <div class="s"><div class="num">1000s</div><div class="lbl">Hearts cared for</div></div>
         </div>
         <div class="hero-ctas">
-          <a class="btn btn-cardiac btn-lg" id="waCta" target="_blank" rel="noopener">Book a Cardiac Consultation</a>
+          <a class="btn btn-cardiac btn-lg" id="waCta" target="_blank" rel="noopener"
+             data-book data-book-spec="car" data-book-src="doctor_page">Book a Cardiac Consultation</a>
           <a class="btn btn-ghost btn-lg" href="services.html#car">Heart care services</a>
         </div>
       </div>
@@ -149,7 +160,8 @@
         <h2>Take care of your heart, calmly and completely</h2>
         <p>Expert cardiac care with clear explanations and minimal waiting. Book a consultation with Dr. Mukul.</p>
         <div class="btns">
-          <a class="btn btn-white btn-lg" id="waCta2" target="_blank" rel="noopener">Book on WhatsApp</a>
+          <a class="btn btn-white btn-lg" id="waCta2" target="_blank" rel="noopener"
+             data-book data-book-spec="car" data-book-src="doctor_page_band">Book on WhatsApp</a>
           <a class="btn btn-ghost btn-lg" href="contact.html">Call the clinic</a>
         </div>
       </div>
@@ -160,6 +172,7 @@
 
   <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
+  <script src="js/booking.js"></script>
   <script>
     const wa = `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hi Sugata Clinic, I'd like to book a cardiac consultation with Dr. Mukul.")}`;
     document.getElementById("waCta").href = wa;

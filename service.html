@@ -12,6 +12,16 @@
   })(window,document,'script','dataLayer','GTM-TX449K9H');</script>
   <!-- End Google Tag Manager -->
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-88D3MYG22N"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-88D3MYG22N');
+  </script>
+
   <title>Service | Sugata Clinic</title>
   <meta name="description" content="Sugata Clinic service details." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -33,6 +43,7 @@
 
   <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
+  <script src="js/booking.js"></script>
   <script>
     const params = new URLSearchParams(location.search);
     const id = params.get("id");
@@ -79,7 +90,8 @@
               This page offers general information and is not a substitute for a consultation.
               For advice specific to you, please book a visit.
             </p>
-            <a class="btn ${btnClass} btn-lg" href="${wa}" target="_blank" rel="noopener" style="margin-top:12px">Book this consultation</a>
+            <a class="btn ${btnClass} btn-lg" href="${wa}" target="_blank" rel="noopener" style="margin-top:12px"
+               data-book data-book-spec="${s.cat}" data-book-type="consult" data-book-service="${id}" data-book-src="service_page">Book this consultation</a>
           </div>
 
           <aside class="side-card reveal">
@@ -91,7 +103,8 @@
             <h4>Related care</h4>
             <ul>${related.map(k => `<li><a href="service.html?id=${k}">${SERVICES[k].title}</a></li>`).join("")}</ul>
 
-            <a class="btn ${btnClass}" href="${wa}" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:6px">Book on WhatsApp</a>
+            <a class="btn ${btnClass}" href="${wa}" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:6px"
+               data-book data-book-spec="${s.cat}" data-book-type="consult" data-book-service="${id}" data-book-src="service_side">Book on WhatsApp</a>
           </aside>
         </div>
       </section>`;

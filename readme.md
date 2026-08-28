@@ -59,40 +59,76 @@ Edit **`js/reviews-data.js`** — replace the text/names, and to add a face set
 - **Dr. Mukul / Cardiology** → deep purple / indigo (soothing)
 Both pulled from the logo so the two doctors read distinctly but stay on-brand.
 
-## Still needs a backend (flagged in the brief)
-- **Live booking slots** and **WhatsApp auto-reply** need a booking tool / WhatsApp
-  Business API. Right now every "Book" button opens WhatsApp with a pre-filled message
-  (reliable, works today). Wire up the automation when that service is chosen.
+## Appointment booking
 
-## Analytics (Google Tag Manager)
+Clicking any **Book** button opens a guided flow: specialty -> consultation or
+lab test -> (which service) -> in-clinic or online -> name and phone. The
+request is written to a Google Sheet and emailed to the clinic.
 
-The site loads **one** tag: GTM container `GTM-TX449K9H`, inline at the top of
-`<head>` on every page. There is no direct `gtag.js` — **GA4 (`G-846S2LVMRY`)
-must be configured as a tag inside GTM**, or no data reaches the dashboard.
+- Flow logic: `js/booking.js` (one IIFE, no globals). Styling: the `.bk-*`
+  block at the end of `css/style.css`.
+- Backend: `apps-script/Code.gs`, deployed as a Google Apps Script Web App.
+  **Setup: [`apps-script/SETUP.md`](apps-script/SETUP.md).**
+- After deploying, paste the `/exec` URL into `ENDPOINT` at the top of
+  `js/booking.js`. Until that is set, the flow ends on an honest "request sent,
+  unconfirmed" screen with a WhatsApp fallback -- it never claims a booking was
+  saved when it wasn't.
 
-### Required GTM setup (one-time, in the GTM UI)
-1. **GA4 Configuration tag** → Measurement ID `G-846S2LVMRY`, trigger *All Pages*.
-   This alone gives you page views.
-2. **Conversion events** — the site pushes these to `dataLayer` (see
-   `initTracking()` in `js/site.js`). For each one, create a *Custom Event*
-   trigger with the matching event name, and a **GA4 Event** tag that uses it:
+Chat CTAs ("Ask on WhatsApp", "Chat with us"), the floating WhatsApp bubble,
+all phone links and the contact form are deliberately untouched -- someone who
+just wants to ask a question shouldn't be pushed through a form.
 
-   | Event name | Fires when | Parameters sent |
-   |---|---|---|
-   | `whatsapp_click` | any WhatsApp link/button is clicked | `cta_location`, `cta_text`, `page_path` |
-   | `call_click` | any `tel:` phone link is clicked | `cta_location`, `phone_number`, `page_path` |
-   | `contact_form_submit` | the contact form is submitted | `doctor`, `page_path` |
+### Still needs a backend
+- **Live booking slots** and **WhatsApp auto-reply** still need a booking tool /
+  WhatsApp Business API. The flow above captures the request; it does not hold
+  a calendar slot.
 
-   `cta_location` is one of `floating_button`, `contact_form`, `header`,
-   `footer`, `hero`, `page` — so you can see which CTA actually converts.
-3. Register the parameters as **custom dimensions** in GA4
-   (*Admin → Custom definitions*) if you want them in reports, then mark
-   the events as **key events** (*Admin → Events*) to count them as conversions.
-4. **Publish the container.** An unpublished GTM container loads and does nothing.
+## Analytics
+
+Two systems, each owning a different job:
+
+| System | ID | Owns |
+|---|---|---|
+| **Google tag** (gtag.js, in every page `<head>`) | `G-88D3MYG22N` | **GA4** - page views and all 8 conversion events |
+| **Google Tag Manager** | `GTM-TX449K9H` | **Google Ads** - conversion tracking and remarketing |
+
+GA4 works on its own and does not depend on GTM. The GTM container is
+currently published but empty, so the Google Ads side is not set up yet.
+
+**Never add a GA4 tag for `G-88D3MYG22N` inside GTM.** gtag.js already sends
+everything to that property; a GA4 tag in GTM would double every page view and
+event with no error to warn you.
+
+Google Ads setup guide: [`docs/gtm-setup.md`](docs/gtm-setup.md)
+
+### What the site sends
+
+`track()` in `js/site.js` sends each interaction to both systems - a
+`dataLayer` push for GTM, and a `gtag("event", ...)` call for GA4. gtag.js
+ignores raw dataLayer pushes, so both lines are needed.
+
+| Event | Fires when |
+|---|---|
+| `whatsapp_click` | a WhatsApp link is clicked |
+| `call_click` | a `tel:` link is clicked |
+| `contact_form_submit` | contact form submitted |
+| `booking_open` | booking modal opened |
+| `booking_step` | a booking step answered |
+| `booking_submit` | **booking completed - the conversion** |
+| `booking_result` | the Sheet write settles (`confirmed`/`unconfirmed`/`failed`) |
+| `booking_abandon` | modal closed before submitting |
+
+`cta_location` is one of `floating_button`, `booking_modal`, `contact_form`,
+`header`, `footer`, `hero`, `page`.
+
+### In GA4
+1. **Admin > Custom definitions** - register `cta_location`, `specialty`,
+   `service`, `visit_mode`, `booking_type` as custom dimensions. Parameters do
+   not appear in reports until registered, and it is not retroactive.
+2. **Admin > Events** - mark `booking_submit` as a key event. That is the
+   conversion, not `whatsapp_click`.
 
 ### Verifying
-GTM *Preview* mode, or DevTools → Network filtered to `googletagmanager` —
-`gtm.js?id=GTM-TX449K9H` should return 200, and clicking a WhatsApp button
-should produce a `collect?...tid=G-846S2LVMRY` request. GA4 → *Realtime*
-shows it within ~30s. Standard reports lag 24–48h. Ad blockers block all of
+DevTools > Network, filter `collect` - one request per event. GA4 > Realtime
+shows it within ~30s; standard reports lag 24-48h. Ad blockers block all of
 this, so test in a clean browser profile.
