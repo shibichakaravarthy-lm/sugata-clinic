@@ -378,18 +378,21 @@ function initCountUp() {
 }
 
 /* ---------- Analytics: conversion events ----------
-   Two tag systems, each reading a different thing, each owning a
-   different job — see docs/gtm-setup.md.
+   No analytics tag is installed on the site right now — GA4 and Google Tag
+   Manager were both removed. This is inert plumbing kept in place so that
+   adding a tag later needs no changes here.
 
-   - gtag.js (G-88D3MYG22N) owns GA4. It ignores raw dataLayer pushes and
-     only acts on gtag() calls, so without the gtag("event") line below GA4
-     would record page views and none of these events.
-   - GTM (GTM-TX449K9H) owns Google Ads conversions and remarketing. It
-     reads the dataLayer push and matches it with a Custom Event trigger.
+   Each interaction is pushed to window.dataLayer as { event, ...params }.
+   With no tag loaded, that array simply collects in memory and goes nowhere.
 
-   HARD RULE: never add a GA4 tag for G-88D3MYG22N inside GTM. gtag.js is
-   already sending these events to that property — a GA4 tag in GTM would
-   send each one a second time and silently double every number.
+   To switch analytics back on:
+   - Google Tag Manager: paste its snippet into every page <head>. It reads
+     these pushes directly — add a Custom Event trigger per event name.
+   - GA4 gtag.js on its own: paste its snippet, then add
+       if (typeof gtag === "function") gtag("event", event, params || {});
+     to track() below. gtag.js ignores raw dataLayer pushes, so without that
+     line you would get page views and none of these events.
+   Do not do both for the same GA4 property, or every hit counts twice.
 
    Events: whatsapp_click · call_click · contact_form_submit ·
            booking_open · booking_step · booking_submit ·
@@ -398,8 +401,7 @@ function initCountUp() {
 
 function track(event, params) {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push(Object.assign({ event: event }, params || {}));  /* GTM */
-  if (typeof gtag === "function") gtag("event", event, params || {});    /* GA4 */
+  window.dataLayer.push(Object.assign({ event: event }, params || {}));
 }
 
 /* Which CTA was clicked — lets the dashboard tell the floating WhatsApp

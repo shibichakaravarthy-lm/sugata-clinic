@@ -85,27 +85,15 @@ just wants to ask a question shouldn't be pushed through a form.
 
 ## Analytics
 
-Two systems, each owning a different job:
+**Nothing is installed.** GA4 and Google Tag Manager were both removed - there
+are no tracking scripts on any page, and no data is being collected.
 
-| System | ID | Owns |
-|---|---|---|
-| **Google tag** (gtag.js, in every page `<head>`) | `G-88D3MYG22N` | **GA4** - page views and all 8 conversion events |
-| **Google Tag Manager** | `GTM-TX449K9H` | **Google Ads** - conversion tracking and remarketing |
+The event instrumentation in `js/site.js` was deliberately left in place. It is
+inert: `track()` pushes each interaction to `window.dataLayer`, which with no
+tag loaded just collects in memory and goes nowhere. It means switching
+analytics on later is a paste job, not a rewrite.
 
-GA4 works on its own and does not depend on GTM. The GTM container is
-currently published but empty, so the Google Ads side is not set up yet.
-
-**Never add a GA4 tag for `G-88D3MYG22N` inside GTM.** gtag.js already sends
-everything to that property; a GA4 tag in GTM would double every page view and
-event with no error to warn you.
-
-Google Ads setup guide: [`docs/gtm-setup.md`](docs/gtm-setup.md)
-
-### What the site sends
-
-`track()` in `js/site.js` sends each interaction to both systems - a
-`dataLayer` push for GTM, and a `gtag("event", ...)` call for GA4. gtag.js
-ignores raw dataLayer pushes, so both lines are needed.
+### Events already instrumented
 
 | Event | Fires when |
 |---|---|
@@ -114,21 +102,30 @@ ignores raw dataLayer pushes, so both lines are needed.
 | `contact_form_submit` | contact form submitted |
 | `booking_open` | booking modal opened |
 | `booking_step` | a booking step answered |
-| `booking_submit` | **booking completed - the conversion** |
+| `booking_submit` | **booking completed - the natural conversion** |
 | `booking_result` | the Sheet write settles (`confirmed`/`unconfirmed`/`failed`) |
 | `booking_abandon` | modal closed before submitting |
 
 `cta_location` is one of `floating_button`, `booking_modal`, `contact_form`,
 `header`, `footer`, `hero`, `page`.
 
-### In GA4
-1. **Admin > Custom definitions** - register `cta_location`, `specialty`,
-   `service`, `visit_mode`, `booking_type` as custom dimensions. Parameters do
-   not appear in reports until registered, and it is not retroactive.
-2. **Admin > Events** - mark `booking_submit` as a key event. That is the
-   conversion, not `whatsapp_click`.
+### Turning it back on
 
-### Verifying
-DevTools > Network, filter `collect` - one request per event. GA4 > Realtime
-shows it within ~30s; standard reports lag 24-48h. Ad blockers block all of
-this, so test in a clean browser profile.
+Pick **one** system - not both for the same GA4 property, or every hit counts
+twice.
+
+**Google Tag Manager.** Paste its snippet into every page `<head>` plus the
+`<noscript>` after `<body>`. GTM reads the dataLayer pushes directly; add a
+Custom Event trigger per event name, then a tag for each. Remember to
+**publish** the container - saving a tag changes nothing on the site.
+
+**GA4 gtag.js on its own.** Paste its snippet into every page `<head>`, then
+add this line to `track()` in `js/site.js`:
+
+    if (typeof gtag === "function") gtag("event", event, params || {});
+
+gtag.js ignores raw dataLayer pushes, so without that line you get page views
+and none of the events above.
+
+Whichever you choose, verify with DevTools > Network filtered to `collect` -
+one request per event, and never two.
