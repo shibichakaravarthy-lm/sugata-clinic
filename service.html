@@ -32,6 +32,7 @@
 
   <div id="site-footer-slot"></div>
 
+  <script src="js/seo-data.js"></script>
   <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
   <script src="js/booking.js"></script>
@@ -45,7 +46,7 @@
       main.innerHTML = `<section class="section"><div class="wrap center">
         <h1>Service not found</h1>
         <p class="section-lead" style="margin:14px auto 24px">The page you're looking for isn't available. Browse all our services instead.</p>
-        <a class="btn btn-primary" href="services.html">All services</a>
+        <a class="btn btn-primary" href="/services">All services</a>
       </div></section>`;
     } else {
       document.title = `${s.title} | Sugata Clinic`;
@@ -63,7 +64,7 @@
         <div class="bgimg" style="background-image:url('${s.image}')"></div>
         <div class="ov"></div>
         <div class="wrap inner">
-          <div class="crumb" style="color:rgba(255,255,255,.8)"><a href="index.html" style="color:#fff">Home</a> › <a href="services.html" style="color:#fff">Services</a> › ${s.title}</div>
+          <div class="crumb" style="color:rgba(255,255,255,.8)"><a href="/" style="color:#fff">Home</a> › <a href="/services" style="color:#fff">Services</a> › ${s.title}</div>
           <span class="stage">${s.stage}</span>
           <h1>${s.title}</h1>
           <p>${s.short}</p>
@@ -92,7 +93,7 @@
             <a class="btn btn-ghost" href="${doctorLink}" style="width:100%;justify-content:center;margin-bottom:24px">View profile</a>
 
             <h4>Related care</h4>
-            <ul>${related.map(k => `<li><a href="service.html?id=${k}">${SERVICES[k].title}</a></li>`).join("")}</ul>
+            <ul>${related.map(k => `<li><a href="${SERVICE_SEO[k] ? "/services/" + SERVICE_SEO[k].slug : "service.html?id=" + k}">${SERVICES[k].title}</a></li>`).join("")}</ul>
 
             <a class="btn ${btnClass}" href="${wa}" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:6px"
                data-book data-book-spec="${s.cat}" data-book-type="consult" data-book-service="${id}" data-book-src="service_side">Book on WhatsApp</a>

@@ -59,6 +59,51 @@ Edit **`js/reviews-data.js`** — replace the text/names, and to add a face set
 - **Dr. Mukul / Cardiology** → deep purple / indigo (soothing)
 Both pulled from the logo so the two doctors read distinctly but stay on-brand.
 
+## SEO & URLs
+
+Service pages, the blog, `sitemap.xml`, `robots.txt` and `_redirects` are
+**generated** - do not edit them by hand. After changing a service or any SEO
+copy, run:
+
+    node tools/build.js
+
+That regenerates 22 service pages, the blog, the sitemap and the redirect map.
+
+### Where things live
+| What | File |
+|---|---|
+| Titles, meta descriptions, H1s, URL slugs | `js/seo-data.js` |
+| Generator | `tools/build.js` |
+| Service copy | `js/services-data.js` |
+| Blog posts | `BLOG_POSTS` in `js/seo-data.js` |
+
+### URLs
+- Homepage is `/` - `/index.html` 301s to it.
+- Pages are extensionless: `/contact`, `/doctors`, `/dr-roshana`.
+- Services are `/services/<slug>` e.g. `/services/pcos-treatment`.
+  The old `service.html?id=<id>` URLs 301 to the new ones.
+- Blog is `/blog` and `/blog/<slug>`.
+
+Every page carries a self-referencing canonical, Open Graph tags and exactly
+one H1. Service pages also carry MedicalWebPage JSON-LD; blog posts carry
+BlogPosting.
+
+### Adding a service
+1. Add it to `SERVICES` (and a stage in `CATEGORIES`) in `js/services-data.js`.
+2. Add a matching entry to `SERVICE_SEO` in `js/seo-data.js` with a `slug`,
+   `title`, `description` and `h1`.
+3. Run `node tools/build.js`. The page, its sitemap entry and its nav links
+   appear automatically.
+
+The build fails loudly if a service has no SEO entry, so the two files cannot
+drift apart.
+
+### Adding a blog post
+Append an entry to `BLOG_POSTS` in `js/seo-data.js` (`slug`, `title`,
+`description`, `h1`, `date`, `cat` of `gyn`/`car`, `excerpt`, `body`), then run
+the build. `body` accepts plain strings for paragraphs, `{ h2: "..." }` for
+headings and `{ list: [...] }` for bullets.
+
 ## Appointment booking
 
 Clicking any **Book** button opens a guided flow: specialty -> consultation or

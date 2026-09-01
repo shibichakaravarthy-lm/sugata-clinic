@@ -13,8 +13,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Contact & Location | Sugata Clinic, Jeevan Bima Nagar, Indiranagar</title>
-  <meta name="description" content="Get in touch with Sugata Heart & Women's Wellness Clinic. 3rd Floor, Jeevan Bima Nagar Main Rd, above Kanti Sweets, Indiranagar, Bengaluru 560075. Call +91 81234 32935." />
+  <title>Book Appointment with Best Gynecologist &amp; Cardiologist in Indiranagar | Sugata Clinic</title>
+  <meta name="description" content="Contact Sugata Clinic to book appointments with experienced gynecologists and cardiologists in Indiranagar, Bangalore." />
+  <link rel="canonical" href="https://sugataclinic.com/contact" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Book Appointment with Best Gynecologist &amp; Cardiologist in Indiranagar | Sugata Clinic" />
+  <meta property="og:description" content="Contact Sugata Clinic to book appointments with experienced gynecologists and cardiologists in Indiranagar, Bangalore." />
+  <meta property="og:url" content="https://sugataclinic.com/contact" />
+  <meta property="og:site_name" content="Sugata Heart &amp; Women's Wellness Clinic" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
@@ -31,7 +38,8 @@
   <section class="hero" style="padding:56px 0 24px">
     <div class="wrap center reveal">
       <span class="eyebrow">Get in touch</span>
-      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">We're here, and easy to reach</h1>
+      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Contact Sugata Clinic</h1>
+        <p class="h1-sub">We're here, and easy to reach</p>
       <p class="section-lead" style="margin:0 auto">Book a consultation, ask a question, or find your way to us in Indiranagar.</p>
     </div>
   </section>
@@ -67,14 +75,24 @@
       </div>
 
       <div class="reveal">
-        <form class="cform" id="contactForm">
+        <form class="cform" id="contactForm" novalidate>
           <div class="row">
-            <div><label>Your name</label><input type="text" name="name" required placeholder="Full name" /></div>
-            <div><label>Phone</label><input type="tel" name="phone" required placeholder="Mobile number" /></div>
+            <div class="bk-field"><label for="cfName">Your name</label>
+              <input type="text" id="cfName" name="name" required minlength="2" maxlength="60"
+                     autocomplete="name" spellcheck="false" placeholder="Full name" />
+              <p class="bk-err" id="cfNameErr" role="alert" hidden></p></div>
+            <div class="bk-field"><label for="cfPhone">Mobile number</label>
+              <div class="bk-phone">
+                <select id="cfDial" name="dial" class="bk-dial" aria-label="Country code"></select>
+                <input type="tel" id="cfPhone" name="phone" required inputmode="numeric"
+                       pattern="[0-9]*" autocomplete="tel-national" placeholder="Mobile number" />
+              </div>
+              <p class="bk-hint" id="cfPhoneHint"></p>
+              <p class="bk-err" id="cfPhoneErr" role="alert" hidden></p></div>
           </div>
           <div>
-            <label>Who would you like to see?</label>
-            <select name="doctor">
+            <label for="cfDoctor">Who would you like to see?</label>
+            <select id="cfDoctor" name="doctor">
               <option>Dr. Roshana — Women's health / Gynaecology</option>
               <option>Dr. Mukul — Heart / Cardiology</option>
               <option>Not sure — please guide me</option>
@@ -82,7 +100,8 @@
           </div>
           <div>
             <label>Message</label>
-            <textarea name="message" rows="4" placeholder="Briefly, what would you like help with?"></textarea>
+            <textarea id="cfMessage" name="message" rows="4" maxlength="1000"
+                      placeholder="Briefly, what would you like help with?"></textarea>
           </div>
           <button type="submit" class="btn btn-primary btn-lg" style="justify-content:center">Send via WhatsApp</button>
           <p style="font-size:.82rem;color:var(--muted)">This opens WhatsApp with your details pre-filled so we can reply quickly.</p>
@@ -117,6 +136,7 @@
 
   <div id="site-footer-slot"></div>
 
+  <script src="js/seo-data.js"></script>
   <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
   <script src="js/booking.js"></script>
@@ -127,10 +147,48 @@
     document.getElementById("mapSlot").innerHTML =
       `<iframe src="${SITE.mapEmbed}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Sugata Clinic location" style="min-height:420px"></iframe>`;
 
+    /* Validation uses the same rules as the booking modal (js/site.js), so a
+       phone accepted in one place is accepted in the other. */
+    const cfErr = (id, msg) => {
+      const el = document.getElementById(id);
+      el.textContent = msg || "";
+      el.hidden = !msg;
+      const field = el.closest(".bk-field");
+      if (field) field.classList.toggle("invalid", !!msg);
+      const input = field && field.querySelector("input");
+      if (input) msg ? input.setAttribute("aria-invalid", "true")
+                     : input.removeAttribute("aria-invalid");
+    };
+    ["cfName", "cfPhone"].forEach((id) =>
+      document.getElementById(id).addEventListener("input", () => cfErr(id + "Err", "")));
+
+    /* Country code + digits-only mobile field, same rules as the booking modal. */
+    const cfDial = document.getElementById("cfDial");
+    const cfPhone = document.getElementById("cfPhone");
+    const cfHint = document.getElementById("cfPhoneHint");
+    cfDial.innerHTML = dialOptionsHTML(DEFAULT_DIAL);
+    cfPhone.maxLength = maxNationalLen();
+    const cfSyncHint = () => { cfHint.textContent = phoneHint(cfDial.value); };
+    cfSyncHint();
+    cfDial.addEventListener("change", () => { cfSyncHint(); cfErr("cfPhoneErr", ""); });
+    cfPhone.addEventListener("input", () => {
+      const clean = digitsOnly(cfPhone.value);       // letters can never stick
+      if (clean !== cfPhone.value) cfPhone.value = clean;
+    });
+
     document.getElementById("contactForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const f = e.target;
-      const msg = `Hi Sugata Clinic, I'd like to book a consultation.%0A%0AName: ${encodeURIComponent(f.name.value)}%0APhone: ${encodeURIComponent(f.phone.value)}%0ADoctor: ${encodeURIComponent(f.doctor.value)}%0AMessage: ${encodeURIComponent(f.message.value)}`;
+
+      const nameEl = document.getElementById("cfName");
+      const phoneEl = document.getElementById("cfPhone");
+      const name = validPersonName(nameEl.value);
+      const phone = normalisePhoneParts(cfDial.value, phoneEl.value);
+      cfErr("cfNameErr", name ? "" : "Please enter your name.");
+      cfErr("cfPhoneErr", phone ? "" : "Enter a valid mobile number — " + phoneHint(cfDial.value) + ".");
+      if (!name) { nameEl.focus(); return; }
+      if (!phone) { phoneEl.focus(); return; }
+      const msg = `Hi Sugata Clinic, I'd like to book a consultation.%0A%0AName: ${encodeURIComponent(name)}%0APhone: ${encodeURIComponent(phone)}%0ADoctor: ${encodeURIComponent(f.doctor.value)}%0AMessage: ${encodeURIComponent(f.message.value.slice(0, 1000))}`;
       window.open(`${base}?text=${msg}`, "_blank");
     });
     /* ---- Finding-us gallery + lightbox ---- */

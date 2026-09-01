@@ -13,8 +13,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Book a Consultation — Our Doctors | Sugata Clinic, Indiranagar</title>
-  <meta name="description" content="Book a consultation at Sugata Clinic, Indiranagar — Dr. Roshana Fulmali (Obstetrician, Gynaecologist & Fertility Specialist) and Dr. Mukul R Fulmali (Consultant Cardiologist). Consulting hours, specialities and languages." />
+  <title>Best Gynecologist &amp; Cardiologist in Indiranagar | Sugata Clinic</title>
+  <meta name="description" content="Meet our experienced gynecologist and cardiologist providing comprehensive women's health and advanced heart care in Indiranagar, Bangalore." />
+  <link rel="canonical" href="https://sugataclinic.com/doctors" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Best Gynecologist &amp; Cardiologist in Indiranagar | Sugata Clinic" />
+  <meta property="og:description" content="Meet our experienced gynecologist and cardiologist providing comprehensive women's health and advanced heart care in Indiranagar, Bangalore." />
+  <meta property="og:url" content="https://sugataclinic.com/doctors" />
+  <meta property="og:site_name" content="Sugata Heart &amp; Women's Wellness Clinic" />
+  <meta name="twitter:card" content="summary_large_image" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
@@ -32,7 +39,8 @@
   <section class="hero" style="padding:56px 0 30px">
     <div class="wrap center reveal">
       <span class="eyebrow">Book a consultation</span>
-      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Our doctors at Indiranagar</h1>
+      <h1 style="font-size:clamp(2rem,4.4vw,3rem);margin-bottom:14px">Meet Our Expert Doctors - Gynecologist &amp; Cardiologist</h1>
+        <p class="h1-sub">Our doctors at Indiranagar</p>
       <p class="section-lead" style="margin:0 auto">
         Two specialists, one clinic. Pick the doctor you need and message us —
         we'll confirm a time that suits you.
@@ -77,7 +85,7 @@
         <p>Tell us what you're experiencing and we'll guide you to the right specialist — women's health or heart care.</p>
         <div class="btns">
           <a class="btn btn-white btn-lg" id="askCta" target="_blank" rel="noopener">Ask on WhatsApp</a>
-          <a class="btn btn-ghost btn-lg" href="contact.html">Contact &amp; location</a>
+          <a class="btn btn-ghost btn-lg" href="/contact">Contact &amp; location</a>
         </div>
       </div>
     </div>
@@ -85,6 +93,7 @@
 
   <div id="site-footer-slot"></div>
 
+  <script src="js/seo-data.js"></script>
   <script src="js/services-data.js"></script>
   <script src="js/site.js"></script>
   <script src="js/booking.js"></script>
@@ -130,7 +139,7 @@
     const chipsFor = (key) =>
       Object.entries(SERVICES)
         .filter(([, s]) => s.doctor === key)
-        .map(([id, s]) => `<a class="c" href="service.html?id=${id}">${s.title}</a>`)
+        .map(([id, s]) => `<a class="c" href="${SERVICE_SEO[id] ? "/services/" + SERVICE_SEO[id].slug : "service.html?id=" + id}">${s.title}</a>`)
         .join("");
 
     const feeHTML = (key) => {

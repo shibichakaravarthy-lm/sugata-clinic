@@ -47,7 +47,12 @@ function svcCardHTML(id) {
   const grad = s.cat === "gyn"
     ? "linear-gradient(135deg,#f04e9a,#e6197e)"
     : "linear-gradient(135deg,#7a4aa8,#4a3d8f)";
-  return `<a class="svc-card ${s.cat}" href="service.html?id=${id}">
+  /* Clean SEO URL from js/seo-data.js; falls back to the legacy query
+     string if that file has not loaded. */
+  const href = (typeof SERVICE_SEO !== "undefined" && SERVICE_SEO[id])
+    ? "/services/" + SERVICE_SEO[id].slug
+    : "service.html?id=" + id;
+  return `<a class="svc-card ${s.cat}" href="${href}">
     <div class="media">
       <div class="bgimg" style="background-image:url('${s.image}'),${grad}"></div>
       <div class="hoverpanel">

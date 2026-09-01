@@ -14,14 +14,14 @@
    ============================================================ */
 
 /* ---- Fill these in. Keep the real values here, not in the website repo. ---- */
-var SHEET_ID     = "__SHEET_ID__";        // from the sheet URL: /d/<THIS>/edit
+var SHEET_ID     = "----";  // Sugata enquiries sheet
 var SHEET_TAB    = "Bookings";
 var CLINIC_EMAIL = "__CLINIC_EMAIL__";    // where booking alerts are sent
 var SECRET       = "sugata-2026";         // must match SECRET in js/booking.js
 
 var HEADERS = ["Timestamp", "Ref", "Specialty", "Doctor", "Type", "Service",
-               "Visit mode", "Name", "Phone", "Phone (as typed)", "Note",
-               "Source page", "CTA", "Status"];
+               "Visit mode", "Name", "Phone", "Country code", "Phone (as typed)", "Address",
+               "Note", "Source page", "CTA", "Status"];
 
 function doGet() {
   return json({ ok: true, service: "sugata-booking" });
@@ -43,6 +43,27 @@ function doPost(e) {
 
     if (!p.name || !p.phone) return json({ ok: false, error: "missing" });
 
+    /* The browser enforces maxlength, but anyone can POST here directly.
+       Clamp every field so a junk payload cannot bloat the sheet. */
+    p.name       = clamp(p.name, 60);
+    p.phone      = clamp(p.phone, 18);
+    p.phone_raw  = clamp(p.phone_raw, 24);
+    p.dial_code  = clamp(p.dial_code, 6);
+    p.address    = clamp(p.address, 250);
+    p.note       = clamp(p.note, 200);
+    p.service    = clamp(p.service, 120);
+    p.specialty  = clamp(p.specialty, 40);
+    p.doctor     = clamp(p.doctor, 60);
+    p.type       = clamp(p.type, 40);
+    p.mode       = clamp(p.mode, 40);
+    p.page       = clamp(p.page, 200);
+    p.cta        = clamp(p.cta, 60);
+    p.ref        = clamp(p.ref, 40);
+
+    if (!/^\+?\d{10,15}$/.test(String(p.phone).replace(/\s/g, ""))) {
+      return json({ ok: false, error: "phone" });
+    }
+
     var cache = CacheService.getScriptCache();
 
     /* Idempotency: the browser retries and the no-cors fallback can both
@@ -59,8 +80,8 @@ function doPost(e) {
 
     sheet().appendRow([
       new Date(), p.ref || "", p.specialty || "", p.doctor || "", p.type || "",
-      p.service || "", p.mode || "", p.name, p.phone, p.phone_raw || "",
-      p.note || "", p.page || "", p.cta || "", "New"
+      p.service || "", p.mode || "", p.name, p.phone, p.dial_code || "", p.phone_raw || "",
+      p.address || "", p.note || "", p.page || "", p.cta || "", "New"
     ]);
 
     if (p.ref) cache.put("ref:" + p.ref, "1", 21600);
@@ -99,6 +120,7 @@ function notify(p) {
     line("Type", p.type) +
     line("Service", p.service) +
     line("Preference", p.mode) +
+    line("Address", p.address) +
     line("Note", p.note) +
     "\n" +
     line("Reference", p.ref) +
@@ -118,6 +140,10 @@ function notify(p) {
    They come from the script.googleusercontent.com redirect target, which is
    why the browser request must stay CORS-simple (form-encoded, no custom
    headers) — see the comment in js/booking.js. */
+function clamp(v, max) {
+  return String(v == null ? "" : v).trim().slice(0, max);
+}
+
 function json(o) {
   return ContentService.createTextOutput(JSON.stringify(o))
                        .setMimeType(ContentService.MimeType.JSON);

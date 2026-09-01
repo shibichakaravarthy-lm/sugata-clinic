@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# No value to search engines, and they are not real pages
+Disallow: /service.html
+Disallow: /*?id=
+
+Sitemap: https://sugataclinic.com/sitemap.xml

@@ -57,6 +57,107 @@ const waLink = (msg) =>
     msg || "Hi Sugata Clinic, I'd like to book a consultation."
   )}`;
 
+/* ---------- Shared field validation ----------
+   One definition, used by the booking modal (js/booking.js) and the
+   contact form, so the two can never drift apart.
+   Keep FIELD_MAX in step with the maxlength attributes in the markup. */
+
+var FIELD_MAX = { name: 60, phone: 15, address: 250, message: 1000 };
+
+/* Dial codes offered in the phone field. India first — the rest are the
+   places the clinic's NRI patients actually call from. `len` is the number
+   of digits in a national mobile number.
+
+   Length is the only rule. Leading-digit checks were removed deliberately:
+   numbering plans change, and rejecting a real patient's working number is
+   far worse than accepting an unusual one. */
+var DIAL_CODES = [
+  { code: "91",  iso: "IN", name: "India",        len: [10] },
+  { code: "971", iso: "AE", name: "UAE",          len: [9] },
+  { code: "966", iso: "SA", name: "Saudi Arabia", len: [9] },
+  { code: "965", iso: "KW", name: "Kuwait",       len: [8] },
+  { code: "974", iso: "QA", name: "Qatar",        len: [8] },
+  { code: "968", iso: "OM", name: "Oman",         len: [8] },
+  { code: "973", iso: "BH", name: "Bahrain",      len: [8] },
+  { code: "65",  iso: "SG", name: "Singapore",    len: [8] },
+  { code: "60",  iso: "MY", name: "Malaysia",     len: [9, 10] },
+  { code: "44",  iso: "GB", name: "UK",           len: [10] },
+  { code: "1",   iso: "US", name: "USA / Canada", len: [10] },
+  { code: "61",  iso: "AU", name: "Australia",    len: [9] },
+  { code: "64",  iso: "NZ", name: "New Zealand",  len: [8, 9, 10] },
+  { code: "353", iso: "IE", name: "Ireland",      len: [9] },
+  { code: "49",  iso: "DE", name: "Germany",      len: [10, 11] },
+  { code: "27",  iso: "ZA", name: "South Africa", len: [9] },
+];
+
+var DEFAULT_DIAL = "91";
+
+function dialFor(code) {
+  for (var i = 0; i < DIAL_CODES.length; i++) {
+    if (DIAL_CODES[i].code === String(code)) return DIAL_CODES[i];
+  }
+  return null;
+}
+
+/* Digits only — the phone field strips everything else as it is typed, so
+   letters can never reach the value. */
+function digitsOnly(v) {
+  return String(v == null ? "" : v).replace(/\D/g, "");
+}
+
+/* The longest national number any offered country uses — drives maxlength. */
+function maxNationalLen() {
+  var m = 0;
+  for (var i = 0; i < DIAL_CODES.length; i++) {
+    for (var j = 0; j < DIAL_CODES[i].len.length; j++) {
+      if (DIAL_CODES[i].len[j] > m) m = DIAL_CODES[i].len[j];
+    }
+  }
+  return m;
+}
+
+/* Mobile numbers only. Returns E.164 ("+919876543210") or null.
+   The country is chosen separately, so a leading 0 is a trunk prefix the
+   caller typed out of habit — strip it rather than reject the number. */
+function normalisePhoneParts(dialCode, national) {
+  var d = dialFor(dialCode);
+  var n = digitsOnly(national).replace(/^0+/, "");
+  if (!d || !n) return null;
+  if (d.len.indexOf(n.length) === -1) return null;
+  return "+" + d.code + n;
+}
+
+/* Human hint for the chosen country, e.g. "10 digits". */
+function phoneHint(dialCode) {
+  var d = dialFor(dialCode);
+  if (!d) return "";
+  var lens = d.len.length > 1
+    ? d.len.slice(0, -1).join(", ") + " or " + d.len[d.len.length - 1]
+    : String(d.len[0]);
+  return lens + " digits";
+}
+
+/* Returns the trimmed, whitespace-collapsed name, or null if it is not
+   plausibly one. */
+function validPersonName(v) {
+  var n = String(v || "").trim().replace(/\s+/g, " ");
+  if (n.length < 2 || n.length > FIELD_MAX.name) return null;
+  if (/[<>{}[\]\/|@#$%^*_=+~`]/.test(n)) return null;   /* markup / injection bait */
+  if (!/[A-Za-zÀ-ɏ]/.test(n)) return null;      /* must contain a letter */
+  return n;
+}
+
+function dialOptionsHTML(selected) {
+  var sel = String(selected || DEFAULT_DIAL);
+  var out = "";
+  for (var i = 0; i < DIAL_CODES.length; i++) {
+    var d = DIAL_CODES[i];
+    out += '<option value="' + d.code + '"' + (d.code === sel ? " selected" : "") +
+           ">" + d.iso + " +" + d.code + "</option>";
+  }
+  return out;
+}
+
 /* ---------- NAV ----------
    Top level stays short. Anything with a `menu` renders as a hover
    dropdown on desktop and a tap-to-expand accordion on mobile.
@@ -67,15 +168,15 @@ const NAV = [
   /* No "Home" item — the logo is the route home, as users expect. */
   {
     label: "Our Doctors",
-    href: "doctors.html",
+    href: "/doctors",
     menu: [
       {
         items: [
-          { href: "dr-roshana.html", label: "Dr. Roshana Fulmali",
+          { href: "/dr-roshana", label: "Dr. Roshana Fulmali",
             note: "Obstetrics, Gynaecology & Fertility", tone: "gyn" },
-          { href: "dr-mukul.html", label: "Dr. Mukul R Fulmali",
+          { href: "/dr-mukul", label: "Dr. Mukul R Fulmali",
             note: "Consultant Cardiologist", tone: "car" },
-          { href: "doctors.html", label: "Compare & book a consultation",
+          { href: "/doctors", label: "Compare & book a consultation",
             note: "See both doctors side by side" },
         ],
       },
@@ -84,30 +185,30 @@ const NAV = [
 
   {
     label: "Services",
-    href: "services.html",
+    href: "/services",
     menu: [
       {
         title: "Women's Health", tone: "gyn",
         items: [
-          { href: "service.html?id=pregnancy-antenatal", label: "Pregnancy & Antenatal Care" },
-          { href: "service.html?id=safe-vaginal-delivery", label: "Safe Vaginal Delivery" },
-          { href: "service.html?id=ivf-icsi", label: "Fertility, IVF & ICSI" },
-          { href: "service.html?id=pcos", label: "PCOS & Hormonal Health" },
-          { href: "service.html?id=menstrual-health", label: "Menstrual Health" },
-          { href: "service.html?id=cancer-screening", label: "Cancer Screening" },
-          { href: "service.html?id=menopause", label: "Menopause & Midlife" },
+          { href: "/services/pregnancy-antenatal-care", label: "Pregnancy & Antenatal Care" },
+          { href: "/services/normal-delivery", label: "Safe Vaginal Delivery" },
+          { href: "/services/ivf-treatment", label: "Fertility, IVF & ICSI" },
+          { href: "/services/pcos-treatment", label: "PCOS & Hormonal Health" },
+          { href: "/services/irregular-periods-treatment", label: "Menstrual Health" },
+          { href: "/services/cervical-cancer-screening", label: "Cancer Screening" },
+          { href: "/services/menopause-treatment", label: "Menopause & Midlife" },
         ],
       },
       {
         title: "Heart & Cardiac", tone: "car",
         items: [
-          { href: "service.html?id=coronary-artery-disease", label: "Coronary Artery Disease" },
-          { href: "service.html?id=heart-attack", label: "Heart Attack Care" },
-          { href: "service.html?id=angiography-angioplasty", label: "Angiography & Angioplasty" },
-          { href: "service.html?id=heart-failure", label: "Heart Failure" },
-          { href: "service.html?id=hypertension", label: "Blood Pressure" },
-          { href: "service.html?id=arrhythmia", label: "Arrhythmia & Pacing" },
-          { href: "services.html", label: "View all services →" },
+          { href: "/services/coronary-artery-disease-treatment", label: "Coronary Artery Disease" },
+          { href: "/services/heart-attack-treatment", label: "Heart Attack Care" },
+          { href: "/services/angiography-angioplasty", label: "Angiography & Angioplasty" },
+          { href: "/services/heart-failure-treatment", label: "Heart Failure" },
+          { href: "/services/hypertension-treatment", label: "Blood Pressure" },
+          { href: "/services/arrhythmia-treatment", label: "Arrhythmia & Pacing" },
+          { href: "/services", label: "View all services →" },
         ],
       },
     ],
@@ -115,16 +216,16 @@ const NAV = [
 
   {
     label: "Diagnostics",
-    href: "diagnostics.html",
+    href: "/diagnostics",
     menu: [
       {
         items: [
-          { href: "diagnostics.html#lab-tests", label: "Lab Tests" },
-          { href: "diagnostics.html#home-collection", label: "Home Sample Collection" },
-          { href: "diagnostics.html#ultrasound", label: "Ultrasound & Scans" },
-          { href: "diagnostics.html#ecg", label: "ECG" },
-          { href: "diagnostics.html#echo", label: "Echocardiography" },
-          { href: "diagnostics.html", label: "All diagnostics →" },
+          { href: "/diagnostics#lab-tests", label: "Lab Tests" },
+          { href: "/diagnostics#home-collection", label: "Home Sample Collection" },
+          { href: "/diagnostics#ultrasound", label: "Ultrasound & Scans" },
+          { href: "/diagnostics#ecg", label: "ECG" },
+          { href: "/diagnostics#echo", label: "Echocardiography" },
+          { href: "/diagnostics", label: "All diagnostics →" },
         ],
       },
     ],
@@ -132,13 +233,14 @@ const NAV = [
 
   {
     label: "Visit Us",
-    href: "contact.html",
+    href: "/contact",
     menu: [
       {
         items: [
-          { href: "journey.html", label: "Your Journey", note: "What to expect, step by step" },
-          { href: "reviews.html", label: "Patient Reviews" },
-          { href: "contact.html", label: "Contact & Location", note: "Address, timings and map" },
+          { href: "/journey", label: "Your Journey", note: "What to expect, step by step" },
+          { href: "/reviews", label: "Patient Reviews" },
+          { href: "/blog", label: "Health Blog", note: "Guides on pregnancy, PCOS and heart health" },
+          { href: "/contact", label: "Contact & Location", note: "Address, timings and map" },
         ],
       },
     ],
@@ -152,8 +254,12 @@ function pageKey(path) {
   const clean = (path || "").split("?")[0].split("#")[0].replace(/\/+$/, "");
   const last = clean.split("/").pop();
   const name = last.toLowerCase().replace(/\.html$/, "");
+  /* Generated pages live in their own directory: /services/<slug>,
+     /blog/<slug>. Highlight the section, not the leaf. */
+  if (/^\/services\//.test(clean)) return "services";
+  if (/^\/blog(\/|$)/.test(clean)) return "blog";
   if (name === "" || name === "index") return "index";
-  /* a single service page belongs under the Services nav item */
+  /* the legacy single-service page also belongs under Services */
   if (name === "service") return "services";
   return name;
 }
@@ -212,7 +318,7 @@ function buildHeader() {
   return `
   <header class="site-header">
     <div class="wrap nav">
-      <a class="brand" href="index.html" aria-label="Sugata Clinic home"${
+      <a class="brand" href="/" aria-label="Sugata Clinic home"${
         active === "index" ? ' aria-current="page"' : ""}>
         <img src="assets/logo.png" alt="Sugata Heart & Women's Wellness Clinic"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
@@ -222,9 +328,9 @@ function buildHeader() {
         </span>
       </a>
       <nav class="nav-links" id="navLinks">${links}<div class="nav-item nav-mobile-only"><a
-        href="doctors.html" class="nav-top" data-book data-book-src="header">Book Consultation</a></div></nav>
+        href="/doctors" class="nav-top" data-book data-book-src="header">Book Consultation</a></div></nav>
       <div class="nav-cta">
-        <a class="btn btn-primary" href="doctors.html" data-book data-book-src="header">Book Consultation</a>
+        <a class="btn btn-primary" href="/doctors" data-book data-book-src="header">Book Consultation</a>
       </div>
       <button class="nav-toggle" id="navToggle" aria-label="Menu">
         <span></span><span></span><span></span>
@@ -252,13 +358,14 @@ function buildFooter() {
         <div>
           <h4>Explore</h4>
           <ul class="foot-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="doctors.html">Our Doctors</a></li>
-            <li><a href="services.html">Services</a></li>
-            <li><a href="diagnostics.html">Diagnostics</a></li>
-            <li><a href="journey.html">Your Journey</a></li>
-            <li><a href="reviews.html">Reviews</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/doctors">Our Doctors</a></li>
+            <li><a href="/services">Services</a></li>
+            <li><a href="/diagnostics">Diagnostics</a></li>
+            <li><a href="/journey">Your Journey</a></li>
+            <li><a href="/reviews">Reviews</a></li>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/contact">Contact</a></li>
           </ul>
         </div>
 

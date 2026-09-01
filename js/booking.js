@@ -21,7 +21,7 @@
   /* Paste the Apps Script Web App /exec URL here. Until it is set the
      flow still runs and falls back to WhatsApp, so the site never has a
      dead Book button. */
-  var ENDPOINT = "";
+  var ENDPOINT = "https://script.google.com/macros/s/AKfycbyEqpznU7q1yOP2XsTZuJleqrqSnU6suhutmlcqAetyIKhLC8ViXhBO6DbC-J3he9u6/exec";
 
   var SECRET = "sugata-2026";   /* must match SECRET in apps-script/Code.gs */
   var TIMEOUT_MS = 12000;
@@ -56,6 +56,8 @@
       name: "",
       phone: "",
       phoneRaw: "",
+      dial: (typeof DEFAULT_DIAL !== "undefined" ? DEFAULT_DIAL : "91"),
+      address: "",
       note: "",
       src: "",
       ctaText: "",
@@ -283,16 +285,33 @@
         '<div class="bk-field">' +
           "<label for=\"bkName\">Your name</label>" +
           '<input type="text" id="bkName" name="name" autocomplete="name"' +
+          ' required minlength="2" maxlength="60" spellcheck="false"' +
           ' placeholder="Full name" value="' + esc(state.name) + '">' +
           '<p class="bk-err" id="bkNameErr" role="alert" hidden></p>' +
         "</div>" +
         '<div class="bk-field">' +
-          "<label for=\"bkPhone\">Phone number</label>" +
-          '<input type="tel" id="bkPhone" name="phone" inputmode="numeric"' +
-          ' autocomplete="tel" placeholder="10-digit mobile number" value="' +
-          esc(state.phoneRaw) + '">' +
+          "<label for=\"bkPhone\">Mobile number</label>" +
+          '<div class="bk-phone">' +
+            '<select id="bkDial" name="dial" class="bk-dial" aria-label="Country code">' +
+            dialOptionsHTML(state.dial) + "</select>" +
+            '<input type="tel" id="bkPhone" name="phone" inputmode="numeric"' +
+            ' required autocomplete="tel-national" pattern="[0-9]*"' +
+            ' maxlength="' + maxNationalLen() + '"' +
+            ' placeholder="Mobile number" value="' + esc(state.phoneRaw) + '">' +
+          "</div>" +
+          '<p class="bk-hint" id="bkPhoneHint">' + esc(phoneHint(state.dial)) + "</p>" +
           '<p class="bk-err" id="bkPhoneErr" role="alert" hidden></p>' +
         "</div>" +
+        (isHomeCollection()
+          ? '<div class="bk-field">' +
+              "<label for=\"bkAddr\">Address for sample collection</label>" +
+              '<textarea id="bkAddr" name="address" rows="3"' +
+              ' required minlength="10" maxlength="250" autocomplete="street-address"' +
+              ' placeholder="Flat / house, street, area and landmark">' +
+              esc(state.address) + "</textarea>" +
+              '<p class="bk-err" id="bkAddrErr" role="alert" hidden></p>' +
+            "</div>"
+          : "") +
         /* honeypot — hidden from people, catnip for bots */
         '<input class="bk-hp" type="text" name="company" tabindex="-1"' +
         ' autocomplete="off" aria-hidden="true">' +
@@ -300,8 +319,11 @@
         '<button type="submit" class="btn ' + primaryBtn() + ' bk-submit">' +
           "Request appointment" +
         "</button>" +
-        '<p class="bk-fine">We\'ll call or WhatsApp you to confirm your slot. ' +
-        "No payment is taken online.</p>" +
+        '<p class="bk-fine">' +
+        (isHomeCollection()
+          ? "We'll call you to confirm a collection time. No payment is taken online."
+          : "We'll call you shortly to confirm your appointment. No payment is taken online.") +
+        "</p>" +
       "</form>"
     );
   }
@@ -328,11 +350,18 @@
     if (state.mode) {
       out.push("Preference: " + modeLabel());
     }
+    if (state.address) out.push("Address: " + state.address);
     if (state.name) out.push("Name: " + state.name);
     if (state.phone) out.push("Phone: " + state.phone);
     if (state.note) out.push("Note: " + state.note);
     if (state.ref) out.push("Ref: " + state.ref);
     return out;
+  }
+
+  /* "Home collection" is the lab branch of the visit-mode step. It is the
+     only path that needs an address. */
+  function isHomeCollection() {
+    return state.type === "lab" && state.mode === "online";
   }
 
   function modeLabel() {
@@ -393,6 +422,16 @@
   }
 
   /* Terminal screens replace the whole body and hide the step chrome. */
+  /* Terminal screens.
+
+     "received" is shown when the request actually reached the clinic —
+     either the server confirmed it, or the no-cors fallback dispatched it
+     (which does deliver; only the reply is unreadable). Both cases are a
+     genuine enquiry, so both get the same reassuring message.
+
+     "handoff" is different: the endpoint is not configured yet, so nothing
+     was sent anywhere. It must never claim the enquiry was received — it
+     asks the patient to finish on WhatsApp instead. */
   function renderTerminal(kind) {
     settled = true;
     var body = root.querySelector(".bk-step");
@@ -407,27 +446,52 @@
       ? '<p class="bk-ref">Reference <strong>' + esc(state.ref) + "</strong></p>"
       : "";
 
-    if (kind === "confirmed") {
-      title.textContent = "Request received";
-      sub.textContent = "We'll call or WhatsApp you to confirm your slot — usually within clinic hours (" + CLINIC_HOURS + ").";
+    if (kind === "handoff") {
+      title.textContent = "One last step";
+      sub.textContent =
+        "Send your details to us on WhatsApp and we'll take it from there — " +
+        "it opens with everything below already filled in.";
       body.innerHTML =
-        '<div class="bk-done"><span class="bk-tick" aria-hidden="true">&#10003;</span>' +
-        refLine +
+        '<div class="bk-done">' +
         '<div class="bk-summary">' + summaryHTML() + "</div>" +
-        '<a class="btn btn-ghost bk-wa" href="' + esc(wa) + '" target="_blank" rel="noopener">Send on WhatsApp</a>' +
+        '<a class="btn ' + primaryBtn() + ' bk-wa" href="' + esc(wa) + '"' +
+        ' target="_blank" rel="noopener">Send on WhatsApp</a>' +
+        '<p class="bk-fine">Or call us on ' +
+        '<a href="tel:' + esc(clinicPhone()) + '">' + esc(clinicPhoneDisplay()) + "</a>.</p>" +
         '<button type="button" class="bk-done-close">Close</button>' +
         "</div>";
-    } else if (kind === "unconfirmed") {
-      title.textContent = "Request sent";
-      sub.textContent = "We couldn't get a confirmation back from our system. Your request was most likely received — if you don't hear from us within clinic hours, send it on WhatsApp too.";
-      body.innerHTML =
-        '<div class="bk-done"><span class="bk-tick warn" aria-hidden="true">!</span>' +
-        refLine +
-        '<div class="bk-summary">' + summaryHTML() + "</div>" +
-        '<a class="btn ' + primaryBtn() + ' bk-wa" href="' + esc(wa) + '" target="_blank" rel="noopener">Send on WhatsApp</a>' +
-        '<button type="button" class="bk-done-close">Close</button>' +
-        "</div>";
+      return;
     }
+
+    /* received */
+    title.textContent = "Enquiry received";
+    sub.textContent = isHomeCollection()
+      ? "Thank you. Our team will call you shortly to confirm your address and a " +
+        "collection time — please keep your phone handy so you don't miss the call."
+      : "Thank you. Our team will call you shortly to confirm your appointment — " +
+        "please keep your phone handy so you don't miss the call.";
+
+    body.innerHTML =
+      '<div class="bk-done"><span class="bk-tick" aria-hidden="true">&#10003;</span>' +
+      refLine +
+      '<div class="bk-summary">' + summaryHTML() + "</div>" +
+      '<p class="bk-fine">Calls come from ' + esc(clinicPhoneDisplay()) +
+      ", usually within clinic hours (" + CLINIC_HOURS + ").</p>" +
+      '<div class="bk-after">' +
+        "<span>Anything to add — a report, a preferred time, a question?</span>" +
+        '<a class="btn btn-ghost btn-sm bk-wa" href="' + esc(wa) + '"' +
+        ' target="_blank" rel="noopener">Message us on WhatsApp</a>' +
+      "</div>" +
+      '<button type="button" class="bk-done-close">Close</button>' +
+      "</div>";
+  }
+
+  function clinicPhone() {
+    return (typeof SITE !== "undefined" && SITE.phone) || "+918123432935";
+  }
+
+  function clinicPhoneDisplay() {
+    return (typeof SITE !== "undefined" && SITE.phoneDisplay) || "+91 81234 32935";
   }
 
   function summaryHTML() {
@@ -440,28 +504,8 @@
 
   /* ---------- Validation ---------- */
 
-  /* Indian mobile: 10 digits starting 6-9, with optional +91 / 91 / 0.
-
-     Known limit: an 11-digit number with a leading 0 is ambiguous — a
-     Bangalore landline "080 2345 6789" and a mobile "0 8023456789" are the
-     same digits. We accept it rather than reject, because turning away a
-     real mobile is worse for a clinic than accepting a landline someone
-     will simply be called back on. The untouched input is also sent as
-     phone_raw and lands in the sheet's "Phone (as typed)" column, so staff
-     always see exactly what the patient typed. */
-  function normalisePhone(raw) {
-    var d = String(raw || "").replace(/\D/g, "");
-    if (d.length === 13 && d.slice(0, 3) === "091") d = d.slice(3);
-    else if (d.length === 12 && d.slice(0, 2) === "91") d = d.slice(2);
-    else if (d.length === 11 && d.charAt(0) === "0") d = d.slice(1);
-    return /^[6-9]\d{9}$/.test(d) ? "+91" + d : null;
-  }
-
   function validName(v) {
-    var n = String(v || "").trim();
-    if (n.length < 2 || n.length > 60) return null;
-    if (/[<>{}[\]\\/]/.test(n)) return null;
-    return n;
+    return typeof validPersonName === "function" ? validPersonName(v) : null;
   }
 
   function showErr(id, message) {
@@ -494,6 +538,8 @@
       name: state.name,
       phone: state.phone,
       phone_raw: state.phoneRaw,
+      dial_code: "+" + (state.dial || ""),
+      address: state.address || "",
       note: state.note || "",
       page: location.pathname + location.search,
       cta: state.src || "",
@@ -508,23 +554,35 @@
     var phoneEl = root.querySelector("#bkPhone");
     var hp = form.querySelector(".bk-hp");
 
+    var dialEl = root.querySelector("#bkDial");
+    var dial = dialEl ? dialEl.value : state.dial;
     var name = validName(nameEl.value);
-    var phone = normalisePhone(phoneEl.value);
+    var phone = normalisePhoneParts(dial, phoneEl.value);
+
+    var addrEl = root.querySelector("#bkAddr");
+    var address = addrEl ? addrEl.value.trim().slice(0, 250) : "";
 
     showErr("bkNameErr", name ? "" : "Please enter your name.");
-    showErr("bkPhoneErr", phone ? "" : "Enter a 10-digit Indian mobile number.");
+    showErr("bkPhoneErr", phone ? "" : "Enter a valid mobile number — " + phoneHint(dial) + ".");
+    if (addrEl) {
+      showErr("bkAddrErr", address.length >= 10 ? ""
+        : "Please add the address where the sample should be collected.");
+    }
     if (!name) { nameEl.focus(); return; }
     if (!phone) { phoneEl.focus(); return; }
+    if (addrEl && address.length < 10) { addrEl.focus(); return; }
+    state.address = address;
 
     state.name = name;
     state.phone = phone;
+    state.dial = dial;
     state.phoneRaw = phoneEl.value.trim();
     if (!state.ref) state.ref = makeRef();
 
     /* Bots fill instantly and fill hidden fields. Treat both as success
        so they get no signal, but send nothing. */
     var tooFast = Date.now() - openedAt < MIN_FILL_MS;
-    if ((hp && hp.value) || tooFast) { renderTerminal("confirmed"); return; }
+    if ((hp && hp.value) || tooFast) { renderTerminal("received"); return; }
 
     fire("booking_submit", {
       specialty: state.spec || "",
@@ -571,7 +629,7 @@
     if (!ENDPOINT) {
       /* Not configured yet — never pretend it saved. */
       setSending(form, false);
-      done("unconfirmed", "not_configured");
+      done("handoff", "not_configured");
       return;
     }
 
@@ -598,9 +656,9 @@
         var data = null;
         try { data = JSON.parse(text); } catch (err) { data = null; }
         setSending(form, false);
-        if (data && data.ok) done("confirmed", "");
+        if (data && data.ok) done("received", "confirmed");
         else if (data && data.error) fail(form, data.error);
-        else done("unconfirmed", "unparseable");
+        else done("received", "unparseable");
       })
       .catch(function (err) {
         if (timer) clearTimeout(timer);
@@ -610,7 +668,7 @@
         fetch(ENDPOINT, { method: "POST", mode: "no-cors", body: body, keepalive: true })
           .then(function () {
             setSending(form, false);
-            done("unconfirmed", String((err && err.name) || "network"));
+            done("received", String((err && err.name) || "network"));
           })
           .catch(function () {
             setSending(form, false);
@@ -634,7 +692,7 @@
   function fail(form, reason) {
     fire("booking_result", { status: "failed", booking_ref: state.ref || "", reason: reason });
     setSending(form, false);
-    alertBox(form, "We couldn't reach the clinic just now — your details are safe.");
+    alertBox(form, "We couldn't reach our system just now. Your details are still here — try again, or send them straight to us on WhatsApp.");
   }
 
   /* ---------- Open / close ---------- */
@@ -768,6 +826,20 @@
     root.addEventListener("input", function (e) {
       if (e.target.id === "bkName") showErr("bkNameErr", "");
       if (e.target.id === "bkPhone") showErr("bkPhoneErr", "");
+      if (e.target.id === "bkAddr") showErr("bkAddrErr", "");
+      /* Letters can never survive in the number field. */
+      if (e.target.id === "bkPhone") {
+        var clean = digitsOnly(e.target.value);
+        if (clean !== e.target.value) e.target.value = clean;
+      }
+    });
+
+    root.addEventListener("change", function (e) {
+      if (e.target.id !== "bkDial") return;
+      state.dial = e.target.value;
+      var hint = root.querySelector("#bkPhoneHint");
+      if (hint) hint.textContent = phoneHint(state.dial);
+      showErr("bkPhoneErr", "");
     });
 
     root.addEventListener("keydown", function (e) {

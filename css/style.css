@@ -1025,3 +1025,56 @@ img { max-width: 100%; display: block; }
   .bk-card, .bk-row, .bk-dot { transition: none; }
   .bk-card:hover { transform: none; }
 }
+
+/* ---------- SEO H1 subheading ----------
+   The H1 now carries the search phrase from the SEO sheet; the page's
+   original headline lives on directly beneath it so the design and the
+   warmth of the original copy survive. */
+.h1-sub {
+  font-family: var(--serif);
+  font-size: clamp(1.25rem, 2.4vw, 1.7rem);
+  line-height: 1.35;
+  color: var(--body);
+  margin: 6px 0 18px;
+  max-width: 44ch;
+}
+.hero .h1-sub { color: var(--body); }
+.profile-hero .h1-sub, .svc-hero .h1-sub { color: rgba(255,255,255,.92); }
+
+/* ---------- Blog ---------- */
+.blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.blog-card {
+  display: flex; flex-direction: column; gap: 9px;
+  background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 24px; box-shadow: var(--shadow-sm);
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.blog-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--pink-light); }
+.blog-card.car:hover { border-color: var(--purple-light); }
+.blog-card h2 { font-family: var(--serif); font-size: 1.15rem; color: var(--ink); line-height: 1.35; }
+.blog-card p { font-size: .92rem; color: var(--body); line-height: 1.6; flex: 1; }
+.blog-card time { font-size: .8rem; color: var(--muted); }
+@media (max-width: 940px) { .blog-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .blog-grid { grid-template-columns: 1fr; } }
+
+/* Post-booking "anything to add?" row — makes the WhatsApp button read as a
+   useful option rather than a rescue from something going wrong. */
+.bk-after {
+  width: 100%; display: flex; flex-direction: column; align-items: center; gap: 9px;
+  border-top: 1px solid var(--line); padding-top: 16px; margin-top: 2px;
+}
+.bk-after span { font-size: .86rem; color: var(--muted); }
+.bk-done .bk-fine { text-align: center; margin: -4px 0 2px; }
+.bk-done .bk-fine a { color: var(--magenta); font-weight: 600; }
+
+/* ---------- Phone field: country code + national number ---------- */
+.bk-phone { display: grid; grid-template-columns: auto 1fr; gap: 8px; }
+.bk-dial {
+  width: auto; min-width: 104px;
+  font-variant-numeric: tabular-nums;
+  background-position: right 10px center;
+}
+.bk-phone input { letter-spacing: .02em; font-variant-numeric: tabular-nums; }
+.bk-hint { font-size: .76rem; color: var(--muted); margin-top: 5px; }
+.bk-field.invalid .bk-hint { color: var(--muted); }
+@media (max-width: 560px) { .bk-dial { min-width: 96px; } }
